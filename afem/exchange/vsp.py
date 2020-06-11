@@ -659,9 +659,14 @@ def _process_unsplit_wing(compound, divide_closed, reloft, tol):
 
     # Segment off the end caps and the trailing edges.
     u1, u2 = uknots[1], uknots[-2]
-    v1, v2 = vknots[1], vknots[-2]
+    if all(master_surf.eval(u1, 0).xyz == master_surf.eval(u1, 1).xyz):
+        sharp_te = True
+        v_te1, v_te2 = vknots[1], vknots[-2]
+    else:
+        sharp_te = False
+        v_te1, v_te2 = vknots[0], vknots[-1]
     s1 = master_surf.copy()
-    s1.segment(u1, u2, v1, v2)
+    s1.segment(u1, u2, v_te1, v_te2)
 
     # Reloft the surface by tessellating a curve at each spanwise knot. This
     # enforces C1 continuity but assumes linear spanwise wing which may not
@@ -699,22 +704,22 @@ def _process_unsplit_wing(compound, divide_closed, reloft, tol):
 
         # Segment off end caps
         u1, u2 = uknots[0], uknots[1]
-        v1, v2 = vknots[1], vsplit
+        v1, v2 = v_te1, vsplit
         s2 = master_surf.copy()
         s2.segment(u1, u2, v1, v2)
 
         u1, u2 = uknots[0], uknots[1]
-        v1, v2 = vsplit, vknots[-2]
+        v1, v2 = vsplit, v_te2
         s3 = master_surf.copy()
         s3.segment(u1, u2, v1, v2)
 
         u1, u2 = uknots[-2], uknots[-1]
-        v1, v2 = vknots[1], vsplit
+        v1, v2 = v_te1, vsplit
         s4 = master_surf.copy()
         s4.segment(u1, u2, v1, v2)
 
         u1, u2 = uknots[-2], uknots[-1]
-        v1, v2 = vsplit, vknots[-2]
+        v1, v2 = vsplit, v_te2
         s5 = master_surf.copy()
         s5.segment(u1, u2, v1, v2)
 
