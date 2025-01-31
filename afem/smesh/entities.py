@@ -18,8 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from __future__ import division
 
-from OCCT.SMDSAbs import SMDSAbs_ElementType
-from OCCT.SMESH import SMESH_Gen, SMESH_subMesh
+from OCC.Core.SMDSAbs import SMDSAbs_ElementType
+from OCC.Core.SMESH import SMESH_Gen, SMESH_subMesh
 from numpy import array, cross, linalg
 
 from afem.geometry.entities import Point
@@ -37,7 +37,7 @@ class Node(object):
     """
     Mesh node.
 
-    :param OCCT.SMDS.SMDS_MeshNode the_node: The SMDS_MeshNode object.
+    :param OCC.Core.SMDS.SMDS_MeshNode the_node: The SMDS_MeshNode object.
     """
 
     def __init__(self, the_node):
@@ -56,7 +56,7 @@ class Node(object):
     def object(self):
         """
         :return: The underlying node.
-        :rtype: OCCT.SMDS.SMDS_MeshNode
+        :rtype: OCC.Core.SMDS.SMDS_MeshNode
         """
         return self._node
 
@@ -105,7 +105,7 @@ class Element(object):
     """
     Generic base class for elements.
 
-    :param OCCT.SMDS.SMDS_MeshElement the_element: The element.
+    :param OCC.Core.SMDS.SMDS_MeshElement the_element: The element.
     """
 
     def __init__(self, the_element):
@@ -126,7 +126,7 @@ class Element(object):
     def object(self):
         """
         :return: The underlying element.
-        :rtype: OCCT.SMDS.SMDS_MeshElement
+        :rtype: OCC.Core.SMDS.SMDS_MeshElement
         """
         return self._elm
 
@@ -413,7 +413,7 @@ class FaceSide(object):
     Entity the represents the side of a quasi-quadrilateral face. It can be
     composed of several edges and gives access to geometry and 1-D mesh.
 
-    :param OCCT.StdMeshers.StdMeshers_FaceSide the_side: The
+    :param OCC.Core.StdMeshers.StdMeshers_FaceSide the_side: The
         StdMeshers_FaceSide instance.
     """
 
@@ -424,7 +424,7 @@ class FaceSide(object):
     def object(self):
         """
         :return: The underlying object.
-        :rtype: OCCT.StdMeshers.StdMeshers_FaceSide
+        :rtype: OCC.Core.StdMeshers.StdMeshers_FaceSide
         """
         return self._fside
 
@@ -532,7 +532,7 @@ class MeshGen(object):
     def object(self):
         """
         :return: The underlying mesh object.
-        :rtype: OCCT.SMESH.SMESH_Gen
+        :rtype: OCC.Core.SMESH.SMESH_Gen
         """
         return self._gen
 
@@ -541,7 +541,7 @@ class MeshGen(object):
         """
         Create a new instance using an existing SMESH_Gen instance.
 
-        :param OCCT.SMESH.SMESH_Gen gen: A SMESH_Gen instance.
+        :param OCC.Core.SMESH.SMESH_Gen gen: A SMESH_Gen instance.
 
         :return: The new instance.
         :rtype: afem.smesh.entities.MeshGen
@@ -614,10 +614,10 @@ class Mesh(object):
     :param afem.smesh.entities.MeshGen gen: The MeshGen instance.
     :param bool is_embedded: Option for embedding mesh.
 
-    :cvar OCCT.SMDSAbs.SMDSAbs_ElementType ALL: SMESH all elements type.
-    :cvar OCCT.SMDSAbs.SMDSAbs_ElementType NODE: SMESH node type.
-    :cvar OCCT.SMDSAbs.SMDSAbs_ElementType EDGE: SMESH edge type.
-    :cvar OCCT.SMDSAbs.SMDSAbs_ElementType VOLUME: SMESH volume type.
+    :cvar OCC.Core.SMDSAbs.SMDSAbs_ElementType ALL: SMESH all elements type.
+    :cvar OCC.Core.SMDSAbs.SMDSAbs_ElementType NODE: SMESH node type.
+    :cvar OCC.Core.SMDSAbs.SMDSAbs_ElementType EDGE: SMESH edge type.
+    :cvar OCC.Core.SMDSAbs.SMDSAbs_ElementType VOLUME: SMESH volume type.
     """
     ALL = SMDSAbs_ElementType.SMDSAbs_All
     NODE = SMDSAbs_ElementType.SMDSAbs_Node
@@ -633,7 +633,7 @@ class Mesh(object):
     def object(self):
         """
         :return: The underlying mesh object.
-        :rtype: OCCT.SMESH.SMESH_Mesh
+        :rtype: OCC.Core.SMESH.SMESH_Mesh
         """
         return self._mesh
 
@@ -754,7 +754,7 @@ class Mesh(object):
         :type shape: afem.topology.entities.Shape
 
         :return: Status of adding hypothesis.
-        :rtype: OCCT.SMESH.SMESH_Hypothesis.Hypothesis_Status
+        :rtype: OCC.Core.SMESH.SMESH_Hypothesis.Hypothesis_Status
 
         :raise ValueError: If no shape is available to apply the hypothesis to.
         """
@@ -838,7 +838,7 @@ class Mesh(object):
         Create a group belonging to the mesh.
 
         :param str name: The name of the group.
-        :param OCCT.SMDSAbs.SMDSAbs_ElementType type_: The element type for the
+        :param OCC.Core.SMDSAbs.SMDSAbs_ElementType type_: The element type for the
             group.
         :param afem.topology.entities.Shape shape: The shape to create the
             group on. If *None* provided, then the group is not on geometry.
@@ -894,7 +894,7 @@ class Mesh(object):
         """
         Create a new instance using an existing SMESH_Mesh instance.
 
-        :param OCCT.SMESH.SMESH_Mesh mesh: A SMESH_Mesh instance.
+        :param OCC.Core.SMESH.SMESH_Mesh mesh: A SMESH_Mesh instance.
 
         :return: The new instance.
         :rtype: afem.smesh.entities.Mesh
@@ -919,7 +919,7 @@ class MeshDS(object):
     def object(self):
         """
         :return: The underlying mesh object.
-        :rtype: OCCT.SMESH.SMESHDS_Mesh
+        :rtype: OCC.Core.SMESH.SMESHDS_Mesh
         """
         return self._ds
 
@@ -1118,7 +1118,7 @@ class MeshDS(object):
         """
         Create a new instance using an existing SMESHDS_Mesh instance.
 
-        :param OCCT.SMESHDS.SMESHDS_Mesh mesh: A SMESHDS_Mesh instance.
+        :param OCC.Core.SMESHDS.SMESHDS_Mesh mesh: A SMESHDS_Mesh instance.
 
         :return: The new instance.
         :rtype: afem.smesh.entities.MeshDS
@@ -1147,7 +1147,7 @@ class SubMesh(object):
     def object(self):
         """
         :return: The underlying sub-mesh object.
-        :rtype: OCCT.SMESH.SMESH_subMesh
+        :rtype: OCC.Core.SMESH.SMESH_subMesh
         """
         return self._mesh
 
@@ -1196,7 +1196,7 @@ class SubMesh(object):
         """
         Create a new instance using an existing SMESH_subMesh instance.
 
-        :param OCCT.SMESH.SMESH_subMesh sub_mesh: A SMESH_subMesh instance.
+        :param OCC.Core.SMESH.SMESH_subMesh sub_mesh: A SMESH_subMesh instance.
 
         :return: The new instance.
         :rtype: afem.smesh.entities.SubMesh
@@ -1243,7 +1243,7 @@ class SubMeshDS(object):
     def object(self):
         """
         :return: The underlying mesh object.
-        :rtype: OCCT.SMESH.SMESHDS_subMesh
+        :rtype: OCC.Core.SMESH.SMESHDS_subMesh
         """
         return self._ds
 
@@ -1312,7 +1312,7 @@ class SubMeshDS(object):
         """
         Create a new instance using an existing SMESHDS_SubMesh instance.
 
-        :param OCCT.SMESHDS.SMESHDS_SubMesh sub_meshds: A SMESHDS_SubMesh
+        :param OCC.Core.SMESHDS.SMESHDS_SubMesh sub_meshds: A SMESHDS_SubMesh
             instance.
 
         :return: The new instance.
@@ -1371,7 +1371,7 @@ class MeshGroup(object):
 
     :param afem.smesh.entities.Mesh mesh: The mesh the group belongs to.
     :param str name: The name of the group.
-    :param OCCT.SMDSAbs.SMDSAbs_ElementType type_: The element type for the
+    :param OCC.Core.SMDSAbs.SMDSAbs_ElementType type_: The element type for the
         group.
     :param afem.topology.entities.Shape shape: The shape to create the
             group on. If *None* provided, then the group is not on geometry.
@@ -1390,7 +1390,7 @@ class MeshGroup(object):
     def object(self):
         """
         :return: The underlying SMESH_Group object.
-        :rtype: OCCT.SMESH.SMESH_Group
+        :rtype: OCC.Core.SMESH.SMESH_Group
         """
         return self._group
 
@@ -1406,7 +1406,7 @@ class MeshGroup(object):
     def type(self):
         """
         :return: The group type.
-        :rtype: OCCT.SMDSAbs.SMDSAbs_ElementType
+        :rtype: OCC.Core.SMDSAbs.SMDSAbs_ElementType
         """
         return self._ds.GetType()
 

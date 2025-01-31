@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BRepBuilderAPI import BRepBuilderAPI_Sewing
-from OCCT.BRepTools import BRepTools_Modifier
-from OCCT.ShapeBuild import ShapeBuild_ReShape
-from OCCT.ShapeCustom import ShapeCustom_BSplineRestriction
-from OCCT.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
+from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Sewing
+from OCC.Core.BRepTools import BRepTools_Modifier
+from OCC.Core.ShapeBuild import ShapeBuild_ReShape
+from OCC.Core.ShapeCustom import ShapeCustom_BSplineRestriction
+from OCC.Core.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
                                ShapeUpgrade_ShapeDivideContinuity,
                                ShapeUpgrade_UnifySameDomain)
-from OCCT.TopTools import (TopTools_DataMapOfShapeShape,
+from OCC.Core.TopTools import (TopTools_MapOfShape,
                            TopTools_IndexedMapOfShape)
 
 from afem.geometry.entities import Geometry
@@ -62,7 +62,7 @@ class DivideContinuityShape(object):
 
     :param afem.topology.entities.Shape shape: The shape.
     :param float tol: The tolerance.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: The continuity to divide.
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: The continuity to divide.
     """
 
     def __init__(self, shape, tol=0.001, continuity=Geometry.C1):
@@ -456,7 +456,7 @@ class RebuildShapesByTool(object):
     def __init__(self, old_shapes, tool):
         reshape = ShapeBuild_ReShape()
 
-        self._new_shapes = TopTools_DataMapOfShapeShape()
+        self._new_shapes = TopTools_MapOfShape()
         index_map = TopTools_IndexedMapOfShape()
 
         for old_shape in old_shapes:
@@ -527,9 +527,9 @@ class ShapeBSplineRestriction(object):
         expense of *dmax*.
     :param bool rational: If *True*, the approximation for rational B-Spline
         and Bezier are converted to polynomial.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity3d: Desired continuity for 3-d
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity3d: Desired continuity for 3-d
         curve and surface approximation.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity2d: Desired continuity for 2-d
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity2d: Desired continuity for 2-d
         curve and surface approximation.
     """
 

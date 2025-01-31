@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import sqrt
 
-from OCCT.BRepBuilderAPI import BRepBuilderAPI_Transformed
-from OCCT.BRepOffset import BRepOffset_Skin
-from OCCT.BRepOffsetAPI import (BRepOffsetAPI_MakeOffsetShape,
+from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_Transformed
+from OCC.Core.BRepOffset import BRepOffset_Skin
+from OCC.Core.BRepOffsetAPI import (BRepOffsetAPI_MakeOffsetShape,
                                 BRepOffsetAPI_MakePipe,
                                 BRepOffsetAPI_MakePipeShell,
                                 BRepOffsetAPI_NormalProjection,
@@ -44,7 +44,7 @@ class ProjectShape(object):
     :param float tol3d: The 3-D tolerance.
     :param float tol2d: The 2-D tolerance. If not provided then
         *sqrt(tol3d)* is used.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: Desired continuity.
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: Desired continuity.
     :param int max_degree: Max degree.
     :param int max_seg: Max segments.
     :param float max_dist: Max distance between target shape and shapes to
@@ -138,7 +138,7 @@ class OffsetShape(object):
         shape if positive and inside if negative.
     :param float tol: Tolerance for coincidence for generated shapes. If not
         provided the average tolerance of the shape is used.
-    :param OCCT.GeomAbs.GeomAbs_JoinType join_mode: Option for how to fill
+    :param OCC.Core.GeomAbs.GeomAbs_JoinType join_mode: Option for how to fill
         holes that may appear when offsetting two adjacent faces.
     :param bool remove_internal_edges: Option to remove internal edges from the
         result.
@@ -196,10 +196,10 @@ class LoftShape(object):
         sections to avoid twisted results and update to have the same number
         of edges.
     :param bool use_smoothing: Option to use approximation algorithm.
-    :param OCCT.Approx.Approx_ParametrizationType par_type: Parametrization
+    :param OCC.Core.Approx.Approx_ParametrizationType par_type: Parametrization
         type.
 
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: The desired continuity.
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: The desired continuity.
     :param int max_degree: The maximum degree for the approximation
         algorithm.
 
@@ -375,7 +375,7 @@ class SweepShapeWithNormal(object):
         resulting surface.
     :param bool force_c1: If *True*, the tool will attempt to approximate a
         C1 surface if a swept surface proved to be C0.
-    :param OCCT.BRepBuilderAPI.BRepBuilderAPI_TransitionMode transition_mode:
+    :param OCC.Core.BRepBuilderAPI.BRepBuilderAPI_TransitionMode transition_mode:
         The transition mode to manage discontinuities on the swept shape.
     """
 

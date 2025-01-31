@@ -17,22 +17,22 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 try:
-    from OCCT.BLSURFPlugin import BLSURFPlugin_BLSURF, BLSURFPlugin_Hypothesis
+    from OCC.Core.BLSURFPlugin import BLSURFPlugin_BLSURF, BLSURFPlugin_Hypothesis
 
     has_mg = True
 except ImportError:
     BLSURFPlugin_BLSURF, BLSURFPlugin_Hypothesis = None, None
     has_mg = False
 
-from OCCT.NETGENPlugin import (NETGENPlugin_Hypothesis_2D,
+from OCC.Core.NETGENPlugin import (NETGENPlugin_Hypothesis_2D,
                                NETGENPlugin_NETGEN_2D,
                                NETGENPlugin_NETGEN_2D_ONLY,
                                NETGENPlugin_SimpleHypothesis_2D,
                                NETGENPlugin_Hypothesis,
                                NETGENPlugin_NETGEN_3D,
                                NETGENPlugin_NETGEN_2D3D)
-from OCCT.SMESH import SMESH_Algo, SMESH_Hypothesis
-from OCCT.StdMeshers import (StdMeshers_Adaptive1D,
+from OCC.Core.SMESH import SMESH_Algo, SMESH_Hypothesis
+from OCC.Core.StdMeshers import (StdMeshers_Adaptive1D,
                              StdMeshers_Deflection1D, StdMeshers_LocalLength,
                              StdMeshers_MaxLength,
                              StdMeshers_NumberOfSegments,
@@ -57,7 +57,7 @@ class Hypothesis(object):
     """
     Base class for all hypotheses.
 
-    :param OCCT.SMESH.SMESH_Hypothesis hyp: The SMESH hypothesis.
+    :param OCC.Core.SMESH.SMESH_Hypothesis hyp: The SMESH hypothesis.
     """
 
     def __init__(self, hyp):
@@ -67,7 +67,7 @@ class Hypothesis(object):
     def object(self):
         """
         :return: The underlying hypothesis.
-        :rtype: OCCT.SMESH.SMESH_Hypothesis
+        :rtype: OCC.Core.SMESH.SMESH_Hypothesis
         """
         return self._hyp
 
@@ -111,7 +111,7 @@ class Algorithm(Hypothesis):
         :return: Edge length.
         :rtype: float
         """
-        return SMESH_Algo.EdgeLength_(e.object)
+        return SMESH_Algo.EdgeLength(e.object)
 
     @staticmethod
     def continuity(e1, e2):
@@ -122,9 +122,9 @@ class Algorithm(Hypothesis):
         :param afem.topology.entities.Vertex e2: The second edge.
 
         :return: The continuity.
-        :rtype: OCCT.GeomAbs.GeomAbs_Shape
+        :rtype: OCC.Core.GeomAbs.GeomAbs_Shape
         """
-        return SMESH_Algo.Continuity_(e1.object, e2.object)
+        return SMESH_Algo.Continuity(e1.object, e2.object)
 
     @staticmethod
     def is_continuous(e1, e2):
@@ -137,7 +137,7 @@ class Algorithm(Hypothesis):
         :return: *True* if continuous, *False* otherwise.
         :rtype: bool
         """
-        return SMESH_Algo.IsContinuous_(e1.object, e2.object)
+        return SMESH_Algo.IsContinuous(e1.object, e2.object)
 
     @staticmethod
     def is_straight(e):
@@ -149,7 +149,7 @@ class Algorithm(Hypothesis):
         :return: *True* if straight, *False* otherwise.
         :rtype: bool
         """
-        return SMESH_Algo.IsStraight_(e.object)
+        return SMESH_Algo.IsStraight(e.object)
 
     @staticmethod
     def is_degenerated(e):
@@ -190,7 +190,7 @@ class Algorithm(Hypothesis):
     def compute_error(self):
         """
         :return: The compute error.
-        :rtype: OCCT.SMESH.SMESH_ComputeError
+        :rtype: OCC.Core.SMESH.SMESH_ComputeError
         """
         return self._hyp.GetComputeError()
 
@@ -208,7 +208,7 @@ class Algorithm(Hypothesis):
 
         :param afem.smesh.entities.Mesh mesh: The mesh.
         :param afem.topology.entities.Shape shape: The shape.
-        :param OCCT.SMESH.SMESH_Hypothesis.Hypothesis_Status status: The status
+        :param OCC.Core.SMESH.SMESH_Hypothesis.Hypothesis_Status status: The status
             to check.
 
         :return: *True* if check matches status, *False* otherwise.
@@ -429,7 +429,7 @@ class QuadrangleHypo2D(Hypothesis):
     Quadrangle 2-D parameters.
 
     :param afem.smesh.entities.MeshGen gen: A mesh generator.
-    :param OCCT.StdMeshers.StdMeshers_QuadType quad_type: The quadrangle
+    :param OCC.Core.StdMeshers.StdMeshers_QuadType quad_type: The quadrangle
         preference for transitions.
     """
 
@@ -464,7 +464,7 @@ class NetgenHypothesis(Hypothesis):
     :param bool second_order: Enable second-order mesh.
     :param bool optimize: Enable mesh optimization.
     :param fineness: Mesh fineness.
-    :type fineness: OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness
+    :type fineness: OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness
     :param float growth_rate: Growth rate between 0 to 1.
     :param int nseg_per_edge: Number of segments per edge.
     :param int nseg_per_radius: Number of segments per radius.
@@ -472,11 +472,11 @@ class NetgenHypothesis(Hypothesis):
         size.
     :param bool fuse_edges: Option to fuse edges.
 
-    :cvar OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness VERYCOARSE:
-    :cvar OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness COARSE:
-    :cvar OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness MODERATE:
-    :cvar OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness FINE:
-    :cvar OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness VERYFINE:
+    :cvar OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness VERYCOARSE:
+    :cvar OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness COARSE:
+    :cvar OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness MODERATE:
+    :cvar OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness FINE:
+    :cvar OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness VERYFINE:
     """
 
     # Fineness
@@ -543,7 +543,7 @@ class NetgenHypo2D(Hypothesis):
     :param bool second_order: Enable second-order mesh.
     :param bool optimize: Enable mesh optimization.
     :param fineness: Mesh fineness.
-    :type fineness: OCCT.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness
+    :type fineness: OCC.Core.NETGENPlugin.NETGENPlugin_Hypothesis.Fineness
     :param float growth_rate: Growth rate between 0 to 1.
     :param int nseg_per_edge: Number of segments per edge.
     :param int nseg_per_radius: Number of segments per radius.

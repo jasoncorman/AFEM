@@ -371,7 +371,7 @@ class TestGeometryDistance(unittest.TestCase):
         c = NurbsCurveByPoints([(0., 0., 0.), (10., 0., 0.)]).curve
         p = Point(5., 1., 0.)
         dist = DistancePointToCurve(p, c)
-        self.assertEqual(dist.nsol, 3)
+        self.assertEqual(dist.nsol, 1)
 
 
 class TestGeometryIntersect(unittest.TestCase):

@@ -91,7 +91,7 @@ class MeshVehicle(object):
         :type shape: afem.topology.entities.Shape
 
         :return: Status of adding hypothesis.
-        :rtype: OCCT.SMESH.SMESH_Hypothesis.Hypothesis_Status
+        :rtype: OCC.Core.SMESH.SMESH_Hypothesis.Hypothesis_Status
         """
         if shape is None:
             shape = self.shape

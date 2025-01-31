@@ -21,7 +21,7 @@ try:
 except ImportError:
     _zip = zip
 
-from collections import Sequence
+from collections.abc import Sequence
 from itertools import tee
 
 from numpy import ndarray

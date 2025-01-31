@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.SMDS import SMDS_ListOfNodes, SMDS_ListOfElements
-from OCCT.SMESH import SMESH_MeshEditor, SMESH_MesherHelper
-from OCCT.gp import gp_Trsf
+from OCC.Core.SMDS import SMDS_ListOfNodes, SMDS_ListOfElements
+from OCC.Core.SMESH import SMESH_MeshEditor, SMESH_MesherHelper
+from OCC.Core.gp import gp_Trsf
 
 from afem.geometry.check import CheckGeom
 from afem.smesh.entities import Element, Node
@@ -41,7 +41,7 @@ class MeshEditor(object):
     def object(self):
         """
         :return: The underlying mesh editor.
-        :rtype: OCCT.SMESH.SMESH_MeshEditor
+        :rtype: OCC.Core.SMESH.SMESH_MeshEditor
         """
         return self._editor
 
@@ -203,7 +203,7 @@ class MeshEditor(object):
         :return: *True* if medium, *False* if not.
         :rtype: bool
         """
-        return self._editor.IsMedium_(node.object)
+        return self._editor.IsMedium(node.object)
 
     def double_elements(self, elms):
         """
@@ -234,7 +234,7 @@ class MeshEditor(object):
         """
         Transform the elements.
 
-        :param OCCT.gp.gp_Trsf trsf: The transformation.
+        :param OCC.Core.gp.gp_Trsf trsf: The transformation.
         :param collection.Sequence(afem.smesh.entities.Element) elements: The
             elements to transform. If none are provided then the whole mesh is
             used.
@@ -377,7 +377,7 @@ class MeshHelper(object):
     def object(self):
         """
         :return: The underlying object.
-        :rtype: OCCT.SMESH.SMESH_MesherHelper
+        :rtype: OCC.Core.SMESH.SMESH_MesherHelper
         """
         return self._helper
 
@@ -429,7 +429,7 @@ class MeshHelper(object):
         :param afem.topology.entities.Shape shape1: The first shape.
         :param afem.topology.entities.Shape shape2: The second shape.
         :param afem.smesh.entities.Mesh mesh: The mesh.
-        :param OCCT.TopAbs.TopAbs_ShapeEnum ancestor_type: The shape type.
+        :param OCC.Core.TopAbs.TopAbs_ShapeEnum ancestor_type: The shape type.
 
         :return: The common ancestor.
         :rtype: afem.topology.entities.Edge

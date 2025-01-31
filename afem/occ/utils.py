@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
+from OCC.Core.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
                           TColStd_Array2OfReal, TColStd_HSequenceOfReal)
-from OCCT.TColgp import (TColgp_Array1OfPnt, TColgp_Array1OfPnt2d,
+from OCC.Core.TColgp import (TColgp_Array1OfPnt, TColgp_Array1OfPnt2d,
                          TColgp_Array2OfPnt, TColgp_HArray1OfPnt,
                          TColgp_HArray1OfPnt2d)
-from OCCT.TopoDS import TopoDS_ListOfShape
-from OCCT.gp import gp_Pnt, gp_Pnt2d
+from OCC.Core.TopTools import TopTools_ListOfShape
+from OCC.Core.gp import gp_Pnt, gp_Pnt2d
 from numpy import array as np_array, zeros
+import OCC.Core.TopoDSToStep
 
 from afem.misc.utils import is_array_like
 
@@ -216,7 +217,7 @@ def to_tcolstd_hseq_real(array):
     :param array_like array: The array.
 
     :return: The OCC data.
-    :rtype: OCCT.TColStd.TColStd_HSequenceOfReal
+    :rtype: OCC.Core.TColStd.TColStd_HSequenceOfReal
     """
     hseq = TColStd_HSequenceOfReal()
     for x in array:
@@ -343,9 +344,10 @@ def to_topods_list(shapes):
     :param list(afem.topology.entities.Shape) shapes: The list.
 
     :return: The list.
-    :rtype: OCCT.TopoDS.TopoDS_ListOfShape
+    :rtype: OCC.Core.TopoDS.TopoDS_ListOfShape
     """
-    topods_list = TopoDS_ListOfShape()
+
+    topods_list = TopTools_ListOfShape()
     for s in shapes:
         topods_list.Append(s.object)
     return topods_list

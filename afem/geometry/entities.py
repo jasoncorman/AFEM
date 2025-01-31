@@ -18,27 +18,27 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import radians
 
-from OCCT.BRepBuilderAPI import (BRepBuilderAPI_MakeFace,
+from OCC.Core.BRepBuilderAPI import (BRepBuilderAPI_MakeFace,
                                  BRepBuilderAPI_MakeEdge,
                                  BRepBuilderAPI_MakeVertex)
-from OCCT.BRepGProp import BRepGProp
-from OCCT.GCPnts import GCPnts_AbscissaPoint
-from OCCT.GProp import GProp_GProps
-from OCCT.Geom import (Geom_Line, Geom_Circle, Geom_Ellipse, Geom_BSplineCurve,
+from OCC.Core.BRepGProp import brepgprop
+from OCC.Core.GCPnts import GCPnts_AbscissaPoint
+from OCC.Core.GProp import GProp_GProps
+from OCC.Core.Geom import (Geom_Line, Geom_Circle, Geom_Ellipse, Geom_BSplineCurve,
                        Geom_TrimmedCurve, Geom_Plane, Geom_BSplineSurface,
                        Geom_Curve, Geom_Surface, Geom_Geometry)
-from OCCT.Geom2d import Geom2d_BSplineCurve, Geom2d_Curve
-from OCCT.Geom2dAdaptor import Geom2dAdaptor_Curve
-from OCCT.GeomAPI import (GeomAPI, GeomAPI_ProjectPointOnCurve,
+from OCC.Core.Geom2d import Geom2d_BSplineCurve, Geom2d_Curve
+from OCC.Core.Geom2dAdaptor import Geom2dAdaptor_Curve
+from OCC.Core.GeomAPI import (geomapi, GeomAPI_ProjectPointOnCurve,
                           GeomAPI_ProjectPointOnSurf)
-from OCCT.GeomAbs import (GeomAbs_Shape, GeomAbs_JoinType, GeomAbs_CurveType,
+from OCC.Core.GeomAbs import (GeomAbs_Shape, GeomAbs_JoinType, GeomAbs_CurveType,
                           GeomAbs_SurfaceType)
-from OCCT.GeomAdaptor import GeomAdaptor_Curve, GeomAdaptor_Surface
-from OCCT.GeomLib import GeomLib_IsPlanarSurface
-from OCCT.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
+from OCC.Core.GeomAdaptor import GeomAdaptor_Curve, GeomAdaptor_Surface
+from OCC.Core.GeomLib import GeomLib_IsPlanarSurface
+from OCC.Core.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
                           TColStd_Array2OfReal)
-from OCCT.TColgp import TColgp_Array1OfPnt, TColgp_Array2OfPnt
-from OCCT.gp import (gp_Ax1, gp_Ax2, gp_Ax3, gp_Dir, gp_Pnt, gp_Pnt2d,
+from OCC.Core.TColgp import TColgp_Array1OfPnt, TColgp_Array2OfPnt
+from OCC.Core.gp import (gp_Ax1, gp_Ax2, gp_Ax3, gp_Dir, gp_Pnt, gp_Pnt2d,
                      gp_Vec2d, gp_Dir2d, gp_Vec)
 from numpy import add, array, float64, subtract, ones
 
@@ -592,7 +592,7 @@ class Geometry2D(object):
     """
     Base class for 2-D geometry.
 
-    :param OCCT.Geom2d.Geom2d_Geometry obj: The geometry object.
+    :param OCC.Core.Geom2d.Geom2d_Geometry obj: The geometry object.
 
     :raise TypeError: If the wrapped type of ``obj`` does not match the
         expected type.
@@ -612,7 +612,7 @@ class Geometry2D(object):
     def object(self):
         """
         :return: The underlying OpenCASCADE object.
-        :rtype: OCCT.Geom2d.Geom2d_Geometry
+        :rtype: OCC.Core.Geom2d.Geom2d_Geometry
         """
         return self._object
 
@@ -811,7 +811,7 @@ class Curve2D(Geometry2D):
         :return: The 3-D curve.
         :rtype: afem.geometry.entities.Curve2D
         """
-        geom_crv = GeomAPI.To3d_(self.object, pln.gp_pln)
+        geom_crv = geomapi.To3d(self.object, pln.gp_pln)
         return Curve.wrap(geom_crv)
 
     @staticmethod
@@ -819,7 +819,7 @@ class Curve2D(Geometry2D):
         """
         Wrap the OpenCASCADE curve based on its type.
 
-        :param OCCT.Geom2d.Geom2d_Curve curve: The curve.
+        :param OCC.Core.Geom2d.Geom2d_Curve curve: The curve.
 
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve2D
@@ -964,7 +964,7 @@ class Point(gp_Pnt, ViewableItem):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Vertex
+        :rtype: OCC.Core.TopoDS.TopoDS_Vertex
         """
         return BRepBuilderAPI_MakeVertex(self).Vertex()
 
@@ -1768,24 +1768,24 @@ class Geometry(ViewableItem):
 
     :param obj: The geometry object.
 
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_C0 C0: Only geometric continuity.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_C1 C1: Continuity of the first
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_C0 C0: Only geometric continuity.
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_C1 C1: Continuity of the first
         derivative.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_C2 C2: Continuity of the second
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_C2 C2: Continuity of the second
         derivative.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_C3 C3: Continuity of the third
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_C3 C3: Continuity of the third
         derivative.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_CN CN: Continuity of the n-th
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_CN CN: Continuity of the n-th
         derivative.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_G1 G1: Tangent vectors on either
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_G1 G1: Tangent vectors on either
         side of a point on a curve are collinear with the same orientation.
-    :cvar OCCT.GeomAbs.GeomAbs_Shape.GeomAbs_G2 G2: Normalized vectors on
+    :cvar OCC.Core.GeomAbs.GeomAbs_Shape.GeomAbs_G2 G2: Normalized vectors on
         either side of a point on a curve are equal.
 
-    :cvar OCCT.GeomAbs.GeomAbs_JoinType.GeomAbs_Arc ARC: Arc join type.
-    :cvar OCCT.GeomAbs.GeomAbs_JoinType.GeomAbs_Tangent TANGENT: Tangent join
+    :cvar OCC.Core.GeomAbs.GeomAbs_JoinType.GeomAbs_Arc ARC: Arc join type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_JoinType.GeomAbs_Tangent TANGENT: Tangent join
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_JoinType.GeomAbs_Intersection INTERSECT:
+    :cvar OCC.Core.GeomAbs.GeomAbs_JoinType.GeomAbs_Intersection INTERSECT:
         Intersection join type.
 
     :raise TypeError: If the wrapped type of ``obj`` does not match the
@@ -1828,7 +1828,7 @@ class Geometry(ViewableItem):
     def object(self):
         """
         :return: The underlying OpenCASCADE object.
-        :rtype: OCCT.Geom.Geom_Geometry
+        :rtype: OCC.Core.Geom.Geom_Geometry
         """
         return self._object
 
@@ -1895,20 +1895,20 @@ class Curve(Geometry):
     """
     Base class for curves around ``Geom_Curve``.
 
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_Line LINE: Line type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_Circle CIRCLE: Circle type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_Ellipse ELLIPSE: Ellipse type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_Hyperbola HYPERBOLA: Hyperbola
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_Line LINE: Line type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_Circle CIRCLE: Circle type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_Ellipse ELLIPSE: Ellipse type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_Hyperbola HYPERBOLA: Hyperbola
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_Parabola PARABOLA: Parabola
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_Parabola PARABOLA: Parabola
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_BezierCurve BEZIER: Bezier
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_BezierCurve BEZIER: Bezier
         curve type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_BSplineCurve BSPLINE: BSpline
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_BSplineCurve BSPLINE: BSpline
         curve type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_OffsetCurve OFFSET: Offset
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_OffsetCurve OFFSET: Offset
         curve type.
-    :cvar OCCT.GeomAbs.GeomAbs_CurveType.GeomAbs_OtherCurve OTHER: Other curve
+    :cvar OCC.Core.GeomAbs.GeomAbs_CurveType.GeomAbs_OtherCurve OTHER: Other curve
         type.
     """
     _OCC_TYPE = Geom_Curve
@@ -1928,7 +1928,7 @@ class Curve(Geometry):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Edge
+        :rtype: OCC.Core.TopoDS.TopoDS_Edge
         """
         return BRepBuilderAPI_MakeEdge(self.object).Edge()
 
@@ -2103,7 +2103,7 @@ class Curve(Geometry):
         """
         Wrap the OpenCASCADE curve based on its type.
 
-        :param OCCT.Geom.Geom_Curve curve: The curve.
+        :param OCC.Core.Geom.Geom_Curve curve: The curve.
 
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve
@@ -2465,23 +2465,23 @@ class Surface(Geometry):
     """
     Base class for surfaces around ``Geom_Surface``.
 
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Plane PLANE: Plane type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Cylinder CYLINDER: Cylinder
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Plane PLANE: Plane type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Cylinder CYLINDER: Cylinder
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Cone CONE: Cone type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Sphere SPHERE: Sphere type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Torus TORUS: Torus type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_BezierSurface BEZIER: Bezier
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Cone CONE: Cone type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Sphere SPHERE: Sphere type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_Torus TORUS: Torus type.
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_BezierSurface BEZIER: Bezier
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_BSplineSurface BSPLINE:
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_BSplineSurface BSPLINE:
         BSpline type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_SurfaceOfRevolution \
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_SurfaceOfRevolution \
         REVOLUTION: Revolution type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_SurfaceOfExtrusion \
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_SurfaceOfExtrusion \
         EXTRUSION: Extrusion type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_OffsetSurface OFFSET: Offset
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_OffsetSurface OFFSET: Offset
         type.
-    :cvar OCCT.GeomAbs.GeomAbs_SurfaceType.GeomAbs_OtherSurface OTHER: Other
+    :cvar OCC.Core.GeomAbs.GeomAbs_SurfaceType.GeomAbs_OtherSurface OTHER: Other
         type.
     """
     _OCC_TYPE = Geom_Surface
@@ -2503,7 +2503,7 @@ class Surface(Geometry):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Face
+        :rtype: OCC.Core.TopoDS.TopoDS_Face
         """
         return BRepBuilderAPI_MakeFace(self.object, 0.).Face()
 
@@ -2511,7 +2511,7 @@ class Surface(Geometry):
     def adaptor(self):
         """
         :return: A surface adaptor.
-        :rtype: OCCT.GeomAdaptor.GeomAdaptor_Surface
+        :rtype: OCC.Core.GeomAdaptor.GeomAdaptor_Surface
         """
         return GeomAdaptor_Surface(self.object)
 
@@ -2653,7 +2653,7 @@ class Surface(Geometry):
         """
         f = BRepBuilderAPI_MakeFace(self.object, u1, u2, v1, v2, tol).Face()
         sprops = GProp_GProps()
-        BRepGProp.SurfaceProperties_(f, sprops, tol)
+        brepgprop.SurfaceProperties(f, sprops, tol)
         return sprops.Mass()
 
     def u_iso(self, u):
@@ -2700,7 +2700,7 @@ class Surface(Geometry):
         """
         Wrap the OpenCASCADE surface based on its type.
 
-        :param OCCT.Geom.Geom_Surface surface: The curve.
+        :param OCC.Core.Geom.Geom_Surface surface: The curve.
 
         :return: The wrapped surface.
         :rtype: afem.geometry.entities.Surface
@@ -2745,7 +2745,7 @@ class Plane(Surface):
     def gp_pln(self):
         """
         :return: The underlying gp_Pln.
-        :rtype: OCCT.gp.gp_Pln
+        :rtype: OCC.Core.gp.gp_Pln
         """
         return self.object.Pln()
 

@@ -6,7 +6,7 @@ channels:
   - cad
 
 dependencies:
-  - python=3.5
-  - pyocct
+  - python>=3.9
+  - pythonocc-core
   - numpy
   - scipy

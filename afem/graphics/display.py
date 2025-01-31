@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 import os
 
-from OCCT.SMESH import SMESH_Mesh, SMESH_subMesh
-from OCCT.TopoDS import TopoDS_Shape
-from OCCT.Visualization import BasicViewer
+from OCC.Core.SMESH import SMESH_Mesh, SMESH_subMesh
+from OCC.Core.TopoDS import TopoDS_Shape
+from OCC.Display.wxDisplay import wxViewer3d
 
 from afem.base.entities import ViewableItem
 from afem.smesh.entities import Mesh, SubMesh, MeshGroup
@@ -33,7 +33,7 @@ __all__ = ["Viewer"]
 _icon = os.path.dirname(__file__) + '/resources/main.png'
 
 
-class Viewer(BasicViewer):
+class Viewer(wxViewer3d):
     """
     Simple tool for viewing entities.
     """
@@ -49,7 +49,7 @@ class Viewer(BasicViewer):
         :param afem.base.entities.ViewableItem item: The item.
 
         :return: The AIS_Shape created for the item.
-        :rtype: OCCT.AIS.AIS_Shape
+        :rtype: OCC.Core.AIS.AIS_Shape
         """
         return self.display_shape(item.displayed_shape, item.color,
                                   item.transparency)
@@ -73,10 +73,10 @@ class Viewer(BasicViewer):
 
         :param items: The items.
         :type items: afem.base.entities.ViewableItem or
-            OCCT.TopoDS.TopoDS_Shape or
+            OCC.Core.TopoDS.TopoDS_Shape or
             afem.structure.group.Group or
-            OCCT.SMESH.SMESH_Mesh or
-            OCCT.SMESH.SMESH_subMesh or
+            OCC.Core.SMESH.SMESH_Mesh or
+            OCC.Core.SMESH.SMESH_subMesh or
             afem.smesh.entities.Mesh or
             afem.smesh.entities.SubMesh or
             afem.smesh.entities.MeshGroup or

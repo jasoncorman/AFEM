@@ -18,14 +18,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from datetime import datetime
 
-from OCCT.BOPAlgo import BOPAlgo_MakerVolume, BOPAlgo_Options
-from OCCT.BRepAlgoAPI import (BRepAlgoAPI_Common, BRepAlgoAPI_Cut,
+from OCC.Core.BOPAlgo import BOPAlgo_MakerVolume, BOPAlgo_Options
+from OCC.Core.BRepAlgoAPI import (BRepAlgoAPI_Common, BRepAlgoAPI_Cut,
                               BRepAlgoAPI_Fuse, BRepAlgoAPI_Section,
                               BRepAlgoAPI_Splitter)
-from OCCT.BRepFeat import BRepFeat_MakeCylindricalHole, BRepFeat_SplitShape
-from OCCT.Message import Message_Gravity
-from OCCT.TopTools import TopTools_SequenceOfShape
-from OCCT.TopoDS import TopoDS_Face
+from OCC.Core.BRepFeat import BRepFeat_MakeCylindricalHole, BRepFeat_SplitShape
+from OCC.Core.Message import Message_Gravity
+from OCC.Core.TopTools import TopTools_SequenceOfShape
+from OCC.Core.TopoDS import TopoDS_Face
 
 from afem.config import logger
 from afem.geometry.entities import Surface
@@ -40,7 +40,7 @@ __all__ = ["BopCore", "BopAlgo", "FuseShapes", "CutShapes", "CommonShapes",
            "SplitWire", "TrimOpenWire"]
 
 # Turn on parallel Boolean execution by default
-BOPAlgo_Options.SetParallelMode_(True)
+BOPAlgo_Options.SetParallelMode(True)
 
 # Message gravities
 _gravities = [Message_Gravity.Message_Trace, Message_Gravity.Message_Info,

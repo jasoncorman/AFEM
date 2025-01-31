@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BRepCheck import BRepCheck_Analyzer
-from OCCT.ShapeBuild import ShapeBuild_ReShape
-from OCCT.ShapeFix import ShapeFix_Shape, ShapeFix_ShapeTolerance
+from OCC.Core.BRepCheck import BRepCheck_Analyzer
+from OCC.Core.ShapeBuild import ShapeBuild_ReShape
+from OCC.Core.ShapeFix import ShapeFix_Shape, ShapeFix_ShapeTolerance
 
 from afem.topology.entities import Shape
 
@@ -75,7 +75,7 @@ class FixShape(object):
     def context(self):
         """
         :return: The context.
-        :rtype: OCCT.ShapeBuild.ShapeBuild_ReShape
+        :rtype: OCC.Core.ShapeBuild.ShapeBuild_ReShape
         """
         return self._tool.Context()
 
@@ -97,7 +97,7 @@ class FixShape(object):
 
         :param afem.topology.entities.Shape shape: The shape.
         :param float tol: Target tolerance.
-        :param OCCT.TopAbs.TopAbs_ShapeEnum styp: The level of shape to set
+        :param OCC.Core.TopAbs.TopAbs_ShapeEnum styp: The level of shape to set
             (i.e., only vertices, only edges, only faces, or all shapes).
 
         :return: *True* if the shape is valid after limiting tolerance, *False*
@@ -116,7 +116,7 @@ class FixShape(object):
 
         :param afem.topology.entities.Shape shape: The shape.
         :param float tol: The tolerance.
-        :param OCCT.TopAbs.TopAbs_ShapeEnum styp: The level of shape to set
+        :param OCC.Core.TopAbs.TopAbs_ShapeEnum styp: The level of shape to set
             (i.e., only vertices, only edges, only faces, or all shapes).
 
         :return: None.

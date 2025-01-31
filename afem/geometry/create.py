@@ -18,22 +18,22 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import ceil, radians
 
-from OCCT.Approx import Approx_ChordLength, Approx_IsoParametric
-from OCCT.BSplCLib import BSplCLib
-from OCCT.GC import GC_MakeCircle
-from OCCT.GCPnts import GCPnts_AbscissaPoint, GCPnts_UniformAbscissa
-from OCCT.Geom import Geom_BSplineSurface, Geom_Circle, Geom_Line, Geom_Plane
-from OCCT.Geom2dAPI import Geom2dAPI_Interpolate, Geom2dAPI_PointsToBSpline
-from OCCT.GeomAPI import (GeomAPI_IntCS, GeomAPI_Interpolate,
+from OCC.Core.Approx import Approx_ChordLength, Approx_IsoParametric
+from OCC.Core.BSplCLib import bsplclib
+from OCC.Core.GC import GC_MakeCircle
+from OCC.Core.GCPnts import GCPnts_AbscissaPoint, GCPnts_UniformAbscissa
+from OCC.Core.Geom import Geom_BSplineSurface, Geom_Circle, Geom_Line, Geom_Plane
+from OCC.Core.Geom2dAPI import Geom2dAPI_Interpolate, Geom2dAPI_PointsToBSpline
+from OCC.Core.GeomAPI import (GeomAPI_IntCS, GeomAPI_Interpolate,
                           GeomAPI_PointsToBSpline)
-from OCCT.GeomFill import (GeomFill_AppSurf, GeomFill_Line,
+from OCC.Core.GeomFill import (GeomFill_AppSurf, GeomFill_Line,
                            GeomFill_SectionGenerator)
-from OCCT.GeomPlate import GeomPlate_BuildAveragePlane
-from OCCT.TColStd import TColStd_Array1OfInteger, TColStd_Array1OfReal
-from OCCT.TColgp import TColgp_Array1OfPnt
-from OCCT.gce import gce_MakeCirc
-from OCCT.gp import gp_Ax3, gp_Pln, gp_Quaternion, gp_Trsf
-from OCCT.gp import gp_Extrinsic_XYZ
+from OCC.Core.GeomPlate import GeomPlate_BuildAveragePlane
+from OCC.Core.TColStd import TColStd_Array1OfInteger, TColStd_Array1OfReal
+from OCC.Core.TColgp import TColgp_Array1OfPnt
+from OCC.Core.gce import gce_MakeCirc
+from OCC.Core.gp import gp_Ax3, gp_Pln, gp_Quaternion, gp_Trsf
+from OCC.Core.gp import gp_Extrinsic_XYZ
 from numpy import array, cross, mean, zeros
 from numpy.linalg import norm
 from scipy.linalg import lu_factor, lu_solve
@@ -725,8 +725,8 @@ class NurbsCurve2DByApprox(object):
     :param collections.Sequence(point2d_like) qp: Points to approximate.
     :param int dmin: Minimum degree.
     :param int dmax: Maximum degree.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
-    :param OCCT.Approx.Approx_ParametrizationType parm_type: Parametrization
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
+    :param OCC.Core.Approx.Approx_ParametrizationType parm_type: Parametrization
         type.
     :param float tol: The tolerance used for approximation. The distance
         from the points to the resulting curve should be lower than *tol*.
@@ -819,8 +819,8 @@ class NurbsCurveByApprox(object):
     :param collections.Sequence(point_like) qp: Points to approximate.
     :param int dmin: Minimum degree.
     :param int dmax: Maximum degree.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
-    :param OCCT.Approx.Approx_ParametrizationType parm_type: Parametrization
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
+    :param OCC.Core.Approx.Approx_ParametrizationType parm_type: Parametrization
         type.
     :param float tol: The tolerance used for approximation. The distance
         from the points to the resulting curve should be lower than *tol*.
@@ -1731,7 +1731,7 @@ class NurbsSurfaceByInterp(object):
     :param list(curve_like) crvs: List of curves to interpolate.
     :param int q: Degree. The parameter will be adjusted if the number of
         curves provided does not support the desired degree.
-    :param OCCT.Approx.Approx_ParametrizationType parm_type: Parametrization
+    :param OCC.Core.Approx.Approx_ParametrizationType parm_type: Parametrization
         type.
     :param float tol2d: 2-D tolerance.
     """
@@ -1800,10 +1800,10 @@ class NurbsSurfaceByInterp(object):
         # Compute OCC vknots and vmult.
         tcol_vknot_seq = occ_utils.to_tcolstd_array1_real(vk)
 
-        nv = BSplCLib.KnotsLength_(tcol_vknot_seq, False)
+        nv = bsplclib.KnotsLength(tcol_vknot_seq, False)
         tcol_vknots = TColStd_Array1OfReal(1, nv)
         tcol_vmult = TColStd_Array1OfInteger(1, nv)
-        BSplCLib.Knots_(tcol_vknot_seq, tcol_vknots, tcol_vmult, False)
+        bsplclib.Knots(tcol_vknot_seq, tcol_vknots, tcol_vmult, False)
 
         # Perform n + 1 interpolations in v-direction to generate surface
         # control points.
@@ -1859,8 +1859,8 @@ class NurbsSurfaceByApprox(object):
     :param float tol3d: 3-D tolerance.
     :param float tol2d: 2-D tolerance.
     :param int niter: Number of iterations.
-    :param OCCT.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
-    :param OCCT.Approx.Approx_ParametrizationType parm_type: Parametrization
+    :param OCC.Core.GeomAbs.GeomAbs_Shape continuity: Desired continuity of curve.
+    :param OCC.Core.Approx.Approx_ParametrizationType parm_type: Parametrization
         type.
 
     :raise RuntimeError: If OCC method fails to approximate the curves with a
@@ -1912,7 +1912,7 @@ class NurbsSurfaceByApprox(object):
                                 tcol_vknots, tcol_umult, tcol_vmult, p, q,
                                 is_u_periodic, is_v_periodic)
 
-        tol3d_reached, tol2d_reached = app_tool.TolReached(0., 0.)
+        tol3d_reached, tol2d_reached = app_tool.TolReached()
         self._s = NurbsSurface(s)
         self._tol3d_reached = tol3d_reached
         self._tol2d_reached = tol2d_reached
