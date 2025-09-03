@@ -18,14 +18,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 import os
 
-from OCC.Core.SMESH import SMESH_Mesh, SMESH_subMesh
 from OCC.Core.TopoDS import TopoDS_Shape
 from OCC.Display.wxDisplay import wxViewer3d
+from OCC.Display.SimpleGui import init_display
 
 from afem.base.entities import ViewableItem
-from afem.smesh.entities import Mesh, SubMesh, MeshGroup
 from afem.structure.group import Group
-from afem.structure.mesh import MeshVehicle
+
 
 __all__ = ["Viewer"]
 
@@ -38,8 +37,8 @@ class Viewer(wxViewer3d):
     Simple tool for viewing entities.
     """
 
-    def __init__(self, width=800, height=600):
-        super(Viewer, self).__init__(width, height)
+    def __init__(self):
+        super(Viewer, self).__init__()
         self.SetLabel('AFEM')
 
     def display_item(self, item):
@@ -75,12 +74,6 @@ class Viewer(wxViewer3d):
         :type items: afem.base.entities.ViewableItem or
             OCC.Core.TopoDS.TopoDS_Shape or
             afem.structure.group.Group or
-            OCC.Core.SMESH.SMESH_Mesh or
-            OCC.Core.SMESH.SMESH_subMesh or
-            afem.smesh.entities.Mesh or
-            afem.smesh.entities.SubMesh or
-            afem.smesh.entities.MeshGroup or
-            afem.structure.mesh.MeshVehicle
 
         :return: None.
         """
@@ -91,11 +84,3 @@ class Viewer(wxViewer3d):
                 self.display_group(item)
             elif isinstance(item, TopoDS_Shape):
                 self.display_shape(item)
-            elif isinstance(item, (Mesh, SubMesh)):
-                self.display_mesh(item.object)
-            elif isinstance(item, (SMESH_Mesh, SMESH_subMesh)):
-                self.display_mesh(item)
-            elif isinstance(item, MeshGroup):
-                self.display_mesh(item.mesh.object, group=item.object)
-            elif isinstance(item, MeshVehicle):
-                self.display_mesh(item.mesh.object)

@@ -24,7 +24,7 @@ setup(
     packages=['afem', 'afem.adaptor', 'afem.base', 'afem.core',
               'afem.exchange', 'afem.geometry', 'afem.graphics',
               'afem.misc', 'afem.occ', 'afem.oml', 'afem.sketch',
-              'afem.smesh', 'afem.structure', 'afem.topology'],
+              'afem.structure', 'afem.topology'],
     author='Laughlin Research, LLC',
     author_email='info@laughlinresearch.com',
     description='Airframe Finite Element Modeler',
