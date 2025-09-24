@@ -37,8 +37,8 @@ class Viewer(wxViewer3d):
     Simple tool for viewing entities.
     """
 
-    def __init__(self):
-        super(Viewer, self).__init__()
+    def __init__(self, parent):
+        super(Viewer, self).__init__(parent)
         self.SetLabel('AFEM')
 
     def display_item(self, item):
