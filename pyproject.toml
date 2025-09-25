@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -15,6 +15,7 @@ authors = [
 license = { text = "LGPL-2.1" }
 requires-python = ">=3.9,<3.13"  # Adjust based on compatibility
 dependencies = [
+	"pythonocc-core",
     "numpy",
     "scipy",
     "wxpython",                                                  
@@ -37,8 +38,10 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/LaughlinResearch/AFEM"
 Repository = "https://github.com/jasoncorman/AFEM"
-Issues = "https://github.com/LaughlinResearch/AFEM/issues"
+Issues = "https://github.com/trelau/AFEM/issues"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["afem*"]
+[tool.setuptools]
+packages = ["afem"]
+
+[tool.setuptools.dynamic]
+version = {attr = "afem.__version__"}
