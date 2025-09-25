@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "afem"
+dependencies = [
+    "pythonocc-core",
+    "numpy",
+    "scipy",
+]
+requires-python = ">=3.10"
+
+description = """
+AFEM is a \"fit-for-purpose\" engineering development toolkit designed to
+support the use of high-order structural analysis during the early phases
+of aircraft conceptual design
+"""
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE.txt"}
+dynamic = ["version"]
+
+[project.optional-dependencies]
+docs = [
+    "docs"
+]
+
+[project.urls]
+Repository = "https://github.com/trelau/AFEM"
+Issues = "https://github.com/trelau/AFEM/issues"
+
+[tool.setuptools]
+packages = ["afem"]
+
+[tool.setuptools.dynamic]
+version = {attr = "afem.__version__"}
