@@ -47,7 +47,7 @@ The AFEM core technology stack includes:
 
 # Installation
 AFEM is currently only supported for Windows 64-bit Python 3.5 and 3.6.
-Cross-platform support is dependent upon prerequisites such as pyOCCT.
+Cross-platform support is dependent upon prerequisites such as pyOCC.Core.
 [Anaconda Python](https://www.anaconda.com/download/) or
 [Miniconda](https://conda.io/miniconda.html) is recommended for installation
 and regular use since many of the prerequisites are available via the Anaconda

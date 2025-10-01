@@ -108,7 +108,7 @@ The entities, tool, and viewing tool are imported by:
 
 The first variable created is a :class:`.Point` and is constructed directly
 from the entity itself. Since the :class:`.Point` class is derived from the
-OpenCASCADE type ``OCCT.gp.gp_Pnt``, one of the available constructor methods
+OpenCASCADE type ``OCC.Core.gp.gp_Pnt``, one of the available constructor methods
 is using three floats to define an x-, y-, and z-coordinate. By default the
 location is (0., 0., 0.)::
 

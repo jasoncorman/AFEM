@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.Quantity import Quantity_TOC_RGB, Quantity_Color
+from OCC.Core.Quantity import Quantity_TOC_RGB, Quantity_Color
 from numpy.random import rand
 
 __all__ = ["Metadata", "NamedItem", "ViewableItem"]
@@ -95,7 +95,7 @@ class ViewableItem(object):
     def displayed_shape(self):
         """
         :return: The shape to be displayed.
-        :rtype: OCCT.TopoDS.TopoDS_Shape
+        :rtype: OCC.Core.TopoDS.TopoDS_Shape
         """
         msg = ('Viewing this type is not yet support. '
                'Implement displayed_shape property.')
@@ -105,7 +105,7 @@ class ViewableItem(object):
     def color(self):
         """
         :return: The color or *None* if not set.
-        :rtype: OCCT.Quantity.Quantity_Color or None
+        :rtype: OCC.Core.Quantity.Quantity_Color or None
         """
         return self._color
 

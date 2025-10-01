@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import sqrt
 
-from OCCT.Extrema import (Extrema_ExtPC, Extrema_ExtCC, Extrema_POnCurv,
+from OCC.Core.Extrema import (Extrema_ExtPC, Extrema_ExtCC, Extrema_POnCurv,
                           Extrema_ExtPS, Extrema_ExtCS, Extrema_POnSurf)
-from OCCT.GeomProjLib import GeomProjLib
+from OCC.Core.GeomProjLib import geomprojlib
 
 from afem.adaptor.entities import AdaptorCurve, AdaptorSurface
 from afem.geometry.check import CheckGeom
@@ -223,7 +223,7 @@ class ProjectPointToSurface(PointProjector):
             npts = ext.NbExt()
             for i in range(1, npts + 1):
                 pos = ext.Point(i)
-                ui, vi = pos.Parameter(0., 0.)
+                ui, vi = pos.Parameter()
                 pi = adp_srf.eval(ui, vi)
                 di = sqrt(ext.SquareDistance(i))
                 self._results.append([pi, (ui, vi), di])
@@ -237,7 +237,7 @@ class ProjectPointToSurface(PointProjector):
             for i in range(1, npts + 1):
                 poc, pos = Extrema_POnCurv(), Extrema_POnSurf()
                 ext.Points(i, poc, pos)
-                ui, vi = pos.Parameter(0., 0.)
+                ui, vi = pos.Parameter()
                 pi = adp_srf.eval(ui, vi)
                 di = sqrt(ext.SquareDistance(i))
                 self._results.append([pi, (ui, vi), di])
@@ -296,7 +296,7 @@ class ProjectCurveToPlane(CurveProjector):
             direction = pln.object.Pln().Axis().Direction()
 
         # OCC projection
-        hcrv = GeomProjLib.ProjectOnPlane_(crv.object, pln.object, direction,
+        hcrv = geomprojlib.ProjectOnPlane(crv.object, pln.object, direction,
                                            keep_param)
 
         self._crv = Curve(hcrv)
@@ -317,5 +317,5 @@ class ProjectCurveToSurface(CurveProjector):
         super(ProjectCurveToSurface, self).__init__()
 
         # OCC projection
-        hcrv = GeomProjLib.Project_(crv.object, srf.object)
+        hcrv = geomprojlib.Project(crv.object, srf.object)
         self._crv = Curve(hcrv)

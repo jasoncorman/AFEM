@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.IFSelect import (IFSelect_RetError,
+from OCC.Core.IFSelect import (IFSelect_RetError,
                            IFSelect_RetDone)
-from OCCT.Interface import Interface_Static
-from OCCT.STEPConstruct import STEPConstruct
-from OCCT.STEPControl import (STEPControl_AsIs, STEPControl_Writer,
+from OCC.Core.Interface import Interface_Static
+from OCC.Core.STEPConstruct import stepconstruct
+from OCC.Core.STEPControl import (STEPControl_AsIs, STEPControl_Writer,
                               STEPControl_Reader)
-from OCCT.TCollection import TCollection_HAsciiString
+from OCC.Core.TCollection import TCollection_HAsciiString
 
 from afem.config import Settings, units_dict
 from afem.topology.entities import Shape
@@ -58,25 +58,25 @@ class StepWrite(object):
                  assembly_mode=None):
         self._writer = STEPControl_Writer()
         self._fp = self._writer.WS().TransferWriter().FinderProcess()
-        Interface_Static.SetCVal_('write.step.schema', schema)
+        Interface_Static.SetCVal('write.step.schema', schema)
 
         try:
             units = units_dict[units]
         except KeyError:
             units = Settings.units
-        Interface_Static.SetCVal_('write.step.unit', units)
+        Interface_Static.SetCVal('write.step.unit', units)
 
         if product_name is not None:
-            Interface_Static.SetCVal_('write.step.product.name', product_name)
+            Interface_Static.SetCVal('write.step.product.name', product_name)
 
         if assembly_mode is not None:
-            Interface_Static.SetIVal_('write.step.assembly', assembly_mode)
+            Interface_Static.SetIVal('write.step.assembly', assembly_mode)
 
     @property
     def object(self):
         """
         :return: The STEP writer object.
-        :rtype: OCCT.STEPControl.STEPControl_Writer
+        :rtype: OCC.Core.STEPControl.STEPControl_Writer
         """
         return self._writer
 
@@ -110,7 +110,7 @@ class StepWrite(object):
         :return: *True* if name is set, *False* otherwise.
         :rtype: bool
         """
-        item = STEPConstruct.FindEntity_(self._fp, shape.object)
+        item = stepconstruct.FindEntity(self._fp, shape.object)
         if not item:
             return False
 
@@ -147,7 +147,7 @@ class StepRead(object):
             raise RuntimeError("Error reading STEP file.")
 
         # Convert to desired units
-        Interface_Static.SetCVal_("xstep.cascade.unit", Settings.units)
+        Interface_Static.SetCVal("xstep.cascade.unit", Settings.units)
 
         # Transfer
         nroots = self._reader.TransferRoots()
@@ -158,7 +158,7 @@ class StepRead(object):
     def object(self):
         """
         :return: The STEP reader object.
-        :rtype: OCCT.STEPControl.STEPControl_Reader
+        :rtype: OCC.Core.STEPControl.STEPControl_Reader
         """
         return self._reader
 

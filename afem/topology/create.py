@@ -16,24 +16,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BRep import BRep_Builder, BRep_Tool
-from OCCT.BRepAlgo import BRepAlgo
-from OCCT.BRepBuilderAPI import (BRepBuilderAPI_FindPlane,
+from OCC.Core.BRep import BRep_Builder, BRep_Tool
+from OCC.Core.BRepAlgo import brepalgo
+from OCC.Core.BRepBuilderAPI import (BRepBuilderAPI_FindPlane,
                                  BRepBuilderAPI_MakeEdge,
                                  BRepBuilderAPI_MakeFace,
                                  BRepBuilderAPI_MakePolygon,
                                  BRepBuilderAPI_MakeShell,
                                  BRepBuilderAPI_MakeWire,
                                  BRepBuilderAPI_Sewing)
-from OCCT.BRepMesh import BRepMesh_IncrementalMesh
-from OCCT.BRepOffsetAPI import BRepOffsetAPI_MakeOffset
-from OCCT.BRepPrimAPI import (BRepPrimAPI_MakeCylinder,
+from OCC.Core.BRepMesh import BRepMesh_IncrementalMesh
+from OCC.Core.BRepOffsetAPI import BRepOffsetAPI_MakeOffset
+from OCC.Core.BRepPrimAPI import (BRepPrimAPI_MakeCylinder,
                               BRepPrimAPI_MakeHalfSpace, BRepPrimAPI_MakePrism,
                               BRepPrimAPI_MakeSphere, BRepPrimAPI_MakeBox)
-from OCCT.ShapeAnalysis import ShapeAnalysis_FreeBounds
-from OCCT.TopLoc import TopLoc_Location
-from OCCT.TopTools import TopTools_HSequenceOfShape
-from OCCT.TopoDS import TopoDS_Compound, TopoDS_Shell
+from OCC.Core.ShapeAnalysis import ShapeAnalysis_FreeBounds
+from OCC.Core.TopLoc import TopLoc_Location
+from OCC.Core.TopTools import TopTools_HSequenceOfShape
+from OCC.Core.TopoDS import TopoDS_Compound, TopoDS_Shell
 
 from afem.adaptor.entities import AdaptorCurve
 from afem.geometry.check import CheckGeom
@@ -242,7 +242,7 @@ class EdgeByWireConcat(object):
     """
 
     def __init__(self, wire):
-        self._e = Edge(BRepAlgo.ConcatenateWireC0_(wire.object))
+        self._e = Edge(brepalgo.ConcatenateWireC0(wire.object))
 
     @property
     def edge(self):
@@ -356,7 +356,7 @@ class WireByPlanarOffset(object):
     :type spine: afem.topology.entities.Wire or afem.topology.entities.Face
     :param float distance: Offset distance in the plane.
     :param float altitude: Offset altitude normal to the plane.
-    :param OCCT.GeomAbs.GeomAbs_JoinType join: Join type.
+    :param OCC.Core.GeomAbs.GeomAbs_JoinType join: Join type.
     """
 
     def __init__(self, spine, distance, altitude=0., join=Geometry.ARC,
@@ -428,7 +428,7 @@ class WireByConcat(object):
     """
 
     def __init__(self, wire):
-        edge = BRepAlgo.ConcatenateWireC0_(wire.object)
+        edge = brepalgo.ConcatenateWireC0(wire.object)
         self._wire = Wire(BRepBuilderAPI_MakeWire(edge).Wire())
 
     @property
@@ -1219,7 +1219,7 @@ class SphereByRadius(object):
     def sphere(self):
         """
         :return: The sphere primitive.
-        :rtype: OCCT.BRepPrim.BRepPrim_Sphere
+        :rtype: OCC.Core.BRepPrim.BRepPrim_Sphere
         """
         return self._builder.Sphere()
 

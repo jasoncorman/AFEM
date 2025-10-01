@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BRepExtrema import (BRepExtrema_DistShapeShape, BRepExtrema_IsVertex,
+from OCC.Core.BRepExtrema import (BRepExtrema_DistShapeShape, BRepExtrema_IsVertex,
                               BRepExtrema_IsOnEdge, BRepExtrema_IsInFace)
-from OCCT.Extrema import Extrema_ExtFlag_MIN
+from OCC.Core.Extrema import Extrema_ExtFlag_MIN
 
 from afem.adaptor.entities import FaceAdaptorSurface
 from afem.config import logger
@@ -114,7 +114,7 @@ class DistanceShapeToShape(object):
         :param int n: The index.
 
         :return: The support type.
-        :rtype: OCCT.BRepExtrema.BRepExtrema_SupportType
+        :rtype: OCC.Core.BRepExtrema.BRepExtrema_SupportType
         """
         return self._tool.SupportTypeShape1(n)
 
@@ -158,7 +158,7 @@ class DistanceShapeToShape(object):
         :param int n: The index.
 
         :return: The support type.
-        :rtype: OCCT.BRepExtrema.BRepExtrema_SupportType
+        :rtype: OCC.Core.BRepExtrema.BRepExtrema_SupportType
         """
         return self._tool.SupportTypeShape2(n)
 

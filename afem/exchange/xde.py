@@ -16,23 +16,23 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-from OCCT.BinXCAFDrivers import BinXCAFDrivers
-from OCCT.IFSelect import IFSelect_RetError
-from OCCT.Interface import Interface_Static
-from OCCT.PCDM import PCDM_StoreStatus, PCDM_ReaderStatus
-from OCCT.STEPCAFControl import STEPCAFControl_Reader
-from OCCT.STEPCAFControl import STEPCAFControl_Writer
-from OCCT.STEPConstruct import STEPConstruct
-from OCCT.TCollection import (TCollection_ExtendedString,
+from OCC.Core.BinXCAFDrivers import binxcafdrivers
+from OCC.Core.IFSelect import IFSelect_RetError
+from OCC.Core.Interface import Interface_Static
+from OCC.Core.PCDM import PCDM_StoreStatus, PCDM_ReaderStatus
+from OCC.Core.STEPCAFControl import STEPCAFControl_Reader
+from OCC.Core.STEPCAFControl import STEPCAFControl_Writer
+from OCC.Core.STEPConstruct import stepconstruct
+from OCC.Core.TCollection import (TCollection_ExtendedString,
                               TCollection_AsciiString,
                               TCollection_HAsciiString)
-from OCCT.TDF import TDF_ChildIterator, TDF_Label, TDF_LabelSequence
-from OCCT.TDataStd import TDataStd_Name, TDataStd_AsciiString
-from OCCT.TDocStd import TDocStd_Document
-from OCCT.TNaming import TNaming_NamedShape
-from OCCT.XCAFApp import XCAFApp_Application
-from OCCT.XCAFDoc import XCAFDoc_DocumentTool, XCAFDoc_Color
-from OCCT.XmlXCAFDrivers import XmlXCAFDrivers
+from OCC.Core.TDF import TDF_ChildIterator, TDF_Label, TDF_LabelSequence
+from OCC.Core.TDataStd import TDataStd_Name, TDataStd_AsciiString
+from OCC.Core.TDocStd import TDocStd_Document
+from OCC.Core.TNaming import TNaming_NamedShape
+from OCC.Core.XCAFApp import XCAFApp_Application
+from OCC.Core.XCAFDoc import XCAFDoc_DocumentTool, XCAFDoc_Color
+from OCC.Core.XmlXCAFDrivers import xmlxcafdrivers
 
 from afem.config import units_dict, Settings
 from afem.topology.entities import Shape
@@ -57,15 +57,14 @@ class XdeDocument(object):
             self._ext = '.xml'
 
         # Get application
-        self._app = XCAFApp_Application.GetApplication_()
+        self._app = XCAFApp_Application.GetApplication()
         if binary:
-            BinXCAFDrivers.DefineFormat_(self._app)
+            binxcafdrivers.DefineFormat(self._app)
         else:
-            XmlXCAFDrivers.DefineFormat_(self._app)
+            xmlxcafdrivers.DefineFormat(self._app)
 
         # Initialize document
-        fmt = TCollection_ExtendedString(self._fmt)
-        self._doc = TDocStd_Document(fmt)
+        self._doc = TDocStd_Document(self._fmt)
         self._app.InitDocument(self._doc)
 
         # Exchange data
@@ -76,7 +75,7 @@ class XdeDocument(object):
         self._init_tool()
 
     def _init_tool(self):
-        self._tool = XCAFDoc_DocumentTool.ShapeTool_(self._doc.Main())
+        self._tool = XCAFDoc_DocumentTool.ShapeTool(self._doc.Main())
 
     @property
     def main_label(self):
@@ -202,7 +201,7 @@ class XdeDocument(object):
         if self._step_writer is None:
             raise RuntimeError('Document has not been transferred.')
 
-        item = STEPConstruct.FindEntity_(self._step_fp, shape.object)
+        item = stepconstruct.FindEntity(self._step_fp, shape.object)
         if not item:
             return False
 
@@ -388,14 +387,14 @@ class XdeDocument(object):
 
         :return: None.
         """
-        self._tool.SetAutoNaming_(mode)
+        self._tool.SetAutoNaming(mode)
 
 
 class XdeLabel(object):
     """
     Wrapper class for OpenCASCADE TDF_Label.
 
-    :param OCCT.TDF.TDF_Label: The label.
+    :param OCC.Core.TDF.TDF_Label: The label.
     """
 
     def __init__(self, label):
@@ -405,7 +404,7 @@ class XdeLabel(object):
     def object(self):
         """
         :return: The underlying object.
-        :rtype: OCCT.TDF.TDF_Label
+        :rtype: OCC.Core.TDF.TDF_Label
         """
         return self._label
 
@@ -480,7 +479,7 @@ class XdeLabel(object):
         :rtype: str or None
         """
         name = TDataStd_Name()
-        status, name = self._label.FindAttribute(name.GetID_(), name)
+        status, name = self._label.FindAttribute(name.GetID(), name)
         if status:
             return name.Get().ToExtString()
         return None
@@ -492,7 +491,7 @@ class XdeLabel(object):
         :rtype: afem.topology.entities.Shape or None
         """
         shape = TNaming_NamedShape()
-        status, shape = self._label.FindAttribute(shape.GetID_(), shape)
+        status, shape = self._label.FindAttribute(shape.GetID(), shape)
         if status:
             return Shape.wrap(shape.Get())
         return None
@@ -504,7 +503,7 @@ class XdeLabel(object):
         :rtype: str or None
         """
         string = TDataStd_AsciiString()
-        status, string = self._label.FindAttribute(string.GetID_(), string)
+        status, string = self._label.FindAttribute(string.GetID(), string)
         if status:
             return string.Get().ToCString()
         return None
@@ -513,10 +512,10 @@ class XdeLabel(object):
     def color(self):
         """
         :return: The label color.
-        :rtype: OCCT.Quantity.Quantity.Color or None
+        :rtype: OCC.Core.Quantity.Quantity.Color or None
         """
         color = XCAFDoc_Color()
-        status4, color = self._label.FindAttribute(color.GetID_(), color)
+        status4, color = self._label.FindAttribute(color.GetID(), color)
         if status4:
             return color.GetColor()
         return None
@@ -584,8 +583,7 @@ class XdeLabel(object):
 
         :return: None.
         """
-        txt = TCollection_ExtendedString(name)
-        TDataStd_Name.Set_(self._label, txt)
+        TDataStd_Name.Set(self._label, name)
 
     def set_string(self, string):
         """
@@ -595,15 +593,14 @@ class XdeLabel(object):
 
         :return: None.
         """
-        txt = TCollection_AsciiString(string)
-        TDataStd_AsciiString.Set_(self._label, txt)
+        TDataStd_AsciiString.Set(self._label, string)
 
     def set_color(self, color):
         """
         Set label color.
 
-        :param OCCT.Quantity.Quantity_Color color: The color.
+        :param OCC.Core.Quantity.Quantity_Color color: The color.
 
         :return: None.
         """
-        XCAFDoc_Color.Set_(self._label, color)
+        XCAFDoc_Color.Set(self._label, color)

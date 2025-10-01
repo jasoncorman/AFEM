@@ -23,5 +23,4 @@ from afem.structure.explore import *
 from afem.structure.fix import *
 from afem.structure.group import *
 from afem.structure.join import *
-from afem.structure.mesh import MeshVehicle
 from afem.structure.modify import *
