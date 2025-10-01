@@ -8,6 +8,7 @@ dependencies = [
     "pythonocc-core",
     "numpy",
     "scipy",
+    "wxpython",
 ]
 requires-python = ">=3.10"
 

@@ -545,12 +545,12 @@ class Shape(ViewableItem):
         """
         this_map = TopTools_IndexedMapOfShape()
         topexp.MapShapes(self.object, Shape.EDGE, this_map)
-        if this_map.Extent() == 0:
+        if this_map.Size() == 0:
             return []
 
         other_map = TopTools_IndexedMapOfShape()
         topexp.MapShapes(other.object, Shape.EDGE, other_map)
-        if other_map.Extent() == 0:
+        if other_map.Size() == 0:
             return []
 
         edges = []

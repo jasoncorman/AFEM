@@ -1,4 +1,4 @@
-name: latest
+name: afem
 
 channels:
   - conda-forge
@@ -8,3 +8,4 @@ dependencies:
   - pythonocc-core
   - numpy
   - scipy
+  - wxpython
