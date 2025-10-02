@@ -4,27 +4,39 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "afem"
+description = "Airframe Finite Element Modeler"
+requires-python = ">=3.9,<3.13"  # Adjust based on compatibility
 dependencies = [
     "pythonocc-core",
     "numpy",
     "scipy",
     "wxpython",
 ]
-requires-python = ">=3.10"
-
-description = """
-AFEM is a \"fit-for-purpose\" engineering development toolkit designed to
-support the use of high-order structural analysis during the early phases
-of aircraft conceptual design
-"""
 readme = {file = "README.md", content-type = "text/markdown"}
+authors = [
+    { name = "Trevor Laughlin", email = "info@laughlinresearch.com" },
+	{ name = "Jason Corman", email = "jason.corman@gatech.edu" },
+	{ name = "David Solano", email = "hsolano3@gatech.edu" }
+]
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
+keywords = ["finite element", "airframe", "CAD", "modeling"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Visualization"
+]
 
 [project.optional-dependencies]
-docs = [
-    "docs"
-]
+docs = ["docs"]
 
 [project.urls]
 Repository = "https://github.com/trelau/AFEM"
