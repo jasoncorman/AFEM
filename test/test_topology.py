@@ -500,7 +500,7 @@ class TestTopologyBop(unittest.TestCase):
         faces = shape.faces
         self.assertGreater(len(faces), 0)
 
-    @unittest.expectedFailure
+
     def test_section_fail_03012018(self):
         """
         Intersection between xz-plane and a face. The intersection should be

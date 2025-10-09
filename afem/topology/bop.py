@@ -96,14 +96,7 @@ class BopCore(object):
         :return: List of modified shapes.
         :rtype: list(afem.topology.entities.Shape)
         """
-        list_of_shape_iterator = TopTools_ListIteratorOfListOfShape(self._bop.Modified(shape.object))
-        list_shapes = []
-        while list_of_shape_iterator.More():
-            a_shape = list_of_shape_iterator.Value()
-            list_shapes.append(a_shape)
-            list_of_shape_iterator.Next()
-
-        return Shape.from_topods_list(list_shapes)
+        return Shape.from_topods_list(self._bop.Modified(shape.object))
 
     def generated(self, shape):
         """

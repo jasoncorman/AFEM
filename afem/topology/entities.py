@@ -34,12 +34,13 @@ from OCC.Core.BRepGProp import brepgprop
 from OCC.Core.BRepTools import breptools, BRepTools_WireExplorer
 from OCC.Core.Bnd import Bnd_Box
 from OCC.Core.GProp import GProp_GProps
+from OCC.Core.Geom import Geom_Plane, Geom_BSplineSurface
 from OCC.Core.GeomConvert import GeomConvert_CompCurveToBSplineCurve
 from OCC.Core.ShapeAnalysis import ShapeAnalysis_Edge, ShapeAnalysis_ShapeTolerance
 from OCC.Core.ShapeFix import ShapeFix_Solid
 from OCC.Core.TopAbs import TopAbs_ShapeEnum
 from OCC.Core.TopExp import topexp
-from OCC.Core.TopTools import TopTools_IndexedMapOfShape
+from OCC.Core.TopTools import TopTools_IndexedMapOfShape, TopTools_ListIteratorOfListOfShape
 from OCC.Core.TopoDS import (topods, TopoDS_Vertex, TopoDS_Edge, TopoDS_Wire,
                          TopoDS_Face, TopoDS_Shell, TopoDS_Solid,
                          TopoDS_Compound, TopoDS_CompSolid, TopoDS_Shape,
@@ -678,7 +679,14 @@ class Shape(ViewableItem):
         :return: The list of shapes.
         :rtype: list(afem.topology.entities.Shape)
         """
-        return [Shape.wrap(s) for s in topods_list]
+        list_of_shape_iterator = TopTools_ListIteratorOfListOfShape(topods_list)
+        list_shapes = []
+        while list_of_shape_iterator.More():
+            a_shape = list_of_shape_iterator.Value()
+            list_shapes.append(a_shape)
+            list_of_shape_iterator.Next()
+
+        return [Shape.wrap(s) for s in list_shapes]
 
 
 class Vertex(Shape):
@@ -899,6 +907,16 @@ class Face(Shape):
         :rtype: afem.geometry.entities.Surface
         """
         geom_surface = BRep_Tool.Surface(self.object)
+
+        # Try to downcast to known types
+        plane = Geom_Plane.DownCast(geom_surface)
+        if plane is not None:
+            return Surface.wrap(plane)
+
+        bspline = Geom_BSplineSurface.DownCast(geom_surface)
+        if bspline is not None:
+            return Surface.wrap(bspline)
+
         return Surface.wrap(geom_surface)
 
     @property
