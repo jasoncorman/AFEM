@@ -18,15 +18,26 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import radians
 
-from OCC.Core.BRepBuilderAPI import (BRepBuilderAPI_MakeFace,
-                                 BRepBuilderAPI_MakeEdge,
-                                 BRepBuilderAPI_MakeVertex)
+from OCC.Core.BRepBuilderAPI import (
+    BRepBuilderAPI_MakeFace,
+    BRepBuilderAPI_MakeEdge,
+    BRepBuilderAPI_MakeVertex,
+)
 from OCC.Core.BRepGProp import brepgprop
 from OCC.Core.GCPnts import GCPnts_AbscissaPoint
 from OCC.Core.GProp import GProp_GProps
-from OCC.Core.Geom import (Geom_Line, Geom_Circle, Geom_Ellipse, Geom_BSplineCurve,
-                       Geom_TrimmedCurve, Geom_Plane, Geom_BSplineSurface,
-                       Geom_Curve, Geom_Surface, Geom_Geometry)
+from OCC.Core.Geom import (
+    Geom_Line,
+    Geom_Circle,
+    Geom_Ellipse,
+    Geom_BSplineCurve,
+    Geom_TrimmedCurve,
+    Geom_Plane,
+    Geom_BSplineSurface,
+    Geom_Curve,
+    Geom_Surface,
+    Geom_Geometry,
+)
 from OCC.Core.Geom2d import Geom2d_BSplineCurve, Geom2d_Curve
 from OCC.Core.Geom2dAdaptor import Geom2dAdaptor_Curve
 from OCC.Core.GeomAPI import (geomapi, GeomAPI_ProjectPointOnCurve,
@@ -47,11 +58,29 @@ from afem.geometry import utils as geom_utils
 from afem.misc import utils as misc_utils
 from afem.occ import utils as occ_utils
 
-__all__ = ["Geometry2D", "Point2D", "Vector2D", "Direction2D",
-           "Curve2D", "NurbsCurve2D",
-           "Geometry", "Point", "Direction", "Vector", "Axis1", "Axis3",
-           "Curve", "Line", "Circle", "Ellipse", "NurbsCurve", "TrimmedCurve",
-           "Surface", "Plane", "NurbsSurface"]
+__all__ = [
+    "Geometry2D",
+    "Point2D",
+    "Vector2D",
+    "Direction2D",
+    "Curve2D",
+    "NurbsCurve2D",
+    "Geometry",
+    "Point",
+    "Direction",
+    "Vector",
+    "Axis1",
+    "Axis3",
+    "Curve",
+    "Line",
+    "Circle",
+    "Ellipse",
+    "NurbsCurve",
+    "TrimmedCurve",
+    "Surface",
+    "Plane",
+    "NurbsSurface",
+]
 
 
 # 2-D -------------------------------------------------------------------------
@@ -824,12 +853,13 @@ class Curve2D(Geometry2D):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve2D
         """
-        if isinstance(curve, Geom2d_BSplineCurve):
+        crv = Geom2d_BSplineCurve.DownCast(curve)
+        if crv is not None:
             return NurbsCurve2D(curve)
 
-        # Catch for unsupported type
-        if isinstance(curve, Geom_Curve):
-            return Curve2D(curve)
+        crv = Geom_Curve.DownCast(curve)
+        if crv is not None:
+            return Curve2D(crv)
 
         raise TypeError('Curve2D type not supported.')
 
@@ -2108,19 +2138,23 @@ class Curve(Geometry):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve
         """
-        if isinstance(curve, Geom_Line):
+        crv = Geom_Line.DownCast()
+        if crv is not None:
             return Line(curve)
-        if isinstance(curve, Geom_Circle):
+        crv = Geom_Circle.DownCast()
+        if crv is not None:
             return Circle(curve)
-        if isinstance(curve, Geom_Ellipse):
+        crv = Geom_Ellipse.DownCast()
+        if crv is not None:
             return Ellipse(curve)
-        if isinstance(curve, Geom_BSplineCurve):
+        crv = Geom_BSplineCurve.DownCast()
+        if crv is not None:
             return NurbsCurve(curve)
-        if isinstance(curve, Geom_TrimmedCurve):
+        crv = Geom_TrimmedCurve.DownCast()
+        if crv is not None:
             return TrimmedCurve(curve)
-
-        # Catch for unsupported type
-        if isinstance(curve, Geom_Curve):
+        crv = Geom_Curve.DownCast()
+        if crv is not None:
             return Curve(curve)
 
         raise TypeError('Curve type not supported.')
@@ -2705,13 +2739,16 @@ class Surface(Geometry):
         :return: The wrapped surface.
         :rtype: afem.geometry.entities.Surface
         """
-        if isinstance(surface, Geom_Plane):
+        crv = Geom_Plane.DownCast()
+        if crv is not None:
             return Plane(surface)
-        if isinstance(surface, Geom_BSplineSurface):
+        crv = Geom_BSplineSurface.DownCast()
+        if crv is not None:
             return NurbsSurface(surface)
 
         # Catch for unsupported type
-        if isinstance(surface, Geom_Surface):
+        crv = Geom_Surface.DownCast()
+        if crv is not None:
             return Surface(surface)
 
         raise TypeError('Surface type not supported.')
