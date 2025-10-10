@@ -320,7 +320,7 @@ class WiresByConnectedEdges(object):
         if tol is None:
             tol = max([e.tol_max for e in edges])
 
-        hwires = ShapeAnalysis_FreeBounds.ConnectEdgesToWires_(hedges, tol,
+        hwires = ShapeAnalysis_FreeBounds.ConnectEdgesToWires(hedges, tol,
                                                                shared)
 
         wires = []
