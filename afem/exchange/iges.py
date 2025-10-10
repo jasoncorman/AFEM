@@ -43,7 +43,7 @@ class IgesWrite(object):
             units = units_dict[units]
         except KeyError:
             units = Settings.units
-        Interface_Static.SetCVal_('write.step.unit', units)
+        Interface_Static.SetCVal('write.step.unit', units)
 
     @property
     def object(self):
@@ -107,7 +107,7 @@ class IgesRead(object):
             raise RuntimeError("Error reading IGES file.")
 
         # Convert to desired units
-        Interface_Static.SetCVal_("xstep.cascade.unit", Settings.units)
+        Interface_Static.SetCVal("xstep.cascade.unit", Settings.units)
 
         # Transfer
         nroots = self._reader.TransferRoots()

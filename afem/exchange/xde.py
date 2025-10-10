@@ -173,12 +173,12 @@ class XdeDocument(object):
         self._step_writer.SetNameMode(True)
         self._step_writer.SetColorMode(True)
 
-        Interface_Static.SetCVal_('write.step.schema', schema)
+        Interface_Static.SetCVal('write.step.schema', schema)
         try:
             units = units_dict[units]
         except KeyError:
             units = Settings.units
-        Interface_Static.SetCVal_('write.step.unit', units)
+        Interface_Static.SetCVal('write.step.unit', units)
 
         self._step_writer.Transfer(self._doc)
 
