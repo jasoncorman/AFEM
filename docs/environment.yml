@@ -1,4 +1,4 @@
-name: latest
+name: afem
 
 channels:
   - defaults
@@ -6,7 +6,7 @@ channels:
   - cad
 
 dependencies:
-  - python>=3.9
+  - python>=3.10
   - pythonocc-core
   - numpy
   - scipy

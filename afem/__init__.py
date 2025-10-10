@@ -18,5 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 import warnings
 
+
+__version__ = '1.2.0'
 # Always show warnings (maybe put them in the log?)
 warnings.simplefilter('always', Warning)

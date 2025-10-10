@@ -32,22 +32,14 @@ The AFEM core technology stack includes:
 * [OpenCASCADE](https://www.opencascade.com): This mature library provides
   advanced geometric modeling and CAD functionality and is under active
   development.
-
-* [Netgen](https://sourceforge.net/projects/netgen-mesher): This library
-  enables advanced meshing capabilities including 3-D tetrahedral and 2-D
-  unstructured quad-dominated surface meshing.
-
-* [Salome Platform](http://www.salome-platform.org): The core meshing library
-  from this open source application serves as the central component for
-  AFEM's mesh generation capabilities.
   
-* [pyOCCT](https://github.com/LaughlinResearch/pyOCCT): This open source
-  project provides Python bindings to the OpenCASCADE and Salome Platform
-  meshing libraries.
+* [pythonocc-core](https://github.com/tpaviot/pythonocc-core): This open source
+  project provides Python bindings to the OpenCASCADE and is actively 
+  maintained.
 
 # Installation
 AFEM is currently only supported for Windows 64-bit Python 3.5 and 3.6.
-Cross-platform support is dependent upon prerequisites such as pyOCC.Core.
+Cross-platform support is dependent upon prerequisites such as pythonocc-core.
 [Anaconda Python](https://www.anaconda.com/download/) or
 [Miniconda](https://conda.io/miniconda.html) is recommended for installation
 and regular use since many of the prerequisites are available via the Anaconda
@@ -57,7 +49,7 @@ It is recommended that a designated environment be created and used for AFEM.
 An example of creating this environment for Anaconda Python within an Anaconda
 command prompt is:
 
-    conda create -n afem python=3.5
+    conda env create -f ./docs/environment.yml
 
 This will create an environment named "afem" with Python 3.5. Make sure this
 environment is active when using AFEM. For Anaconda Python, activating this
@@ -67,25 +59,6 @@ environment may look like:
 
 within an Anaconda command prompt.
  
-The [pyOCCT](https://github.com/LaughlinResearch/pyOCCT) package developed by
-Laughlin Research should now be installed. For supported platforms, installing
-pyOCCT can be done by:
-
-    conda install -c laughlinresearch -c conda-forge pyocct
-
-Other dependencies such as NumPy and SciPy can be installed as needed using
-the conda package manager:
-
-    conda install numpy scipy
-    
-or pip:
-
-    pip install numpy scipy
-    
-A minimal graphical user interface requires the wxPython package which can be
-installed by:
-
-    conda install -c conda-forge wxpython
 
 # Installing AFEM
 Be sure to activate the designed AFEM environment before installation.
@@ -138,4 +111,3 @@ The focus is currently:
 * Adding (and completing) examples
 * Simplifying the rules for meshing parts
 * Moving doctests to unit tests and adding more test
-* Cross-platform support for prerequisites like pyOCCT
