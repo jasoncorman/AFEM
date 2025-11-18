@@ -31,6 +31,7 @@ from OCC.Core.BRepBuilderAPI import (
 )
 from OCC.Core.BRepClass3d import brepclass3d
 from OCC.Core.BRepGProp import brepgprop
+from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox
 from OCC.Core.BRepTools import breptools, BRepTools_WireExplorer
 from OCC.Core.Bnd import Bnd_Box
 from OCC.Core.GProp import GProp_GProps
@@ -39,7 +40,7 @@ from OCC.Core.ShapeAnalysis import ShapeAnalysis_Edge, ShapeAnalysis_ShapeTolera
 from OCC.Core.ShapeFix import ShapeFix_Solid
 from OCC.Core.TopAbs import TopAbs_ShapeEnum
 from OCC.Core.TopExp import topexp
-from OCC.Core.TopTools import TopTools_IndexedMapOfShape
+from OCC.Core.TopTools import TopTools_IndexedMapOfShape, TopTools_ListIteratorOfListOfShape
 from OCC.Core.TopoDS import (topods, TopoDS_Vertex, TopoDS_Edge, TopoDS_Wire,
                          TopoDS_Face, TopoDS_Shell, TopoDS_Solid,
                          TopoDS_Compound, TopoDS_CompSolid, TopoDS_Shape,
@@ -678,7 +679,12 @@ class Shape(ViewableItem):
         :return: The list of shapes.
         :rtype: list(afem.topology.entities.Shape)
         """
-        return [Shape.wrap(s) for s in topods_list]
+        shapes = []
+        itr = TopTools_ListIteratorOfListOfShape(topods_list)
+        while itr.More():
+            shapes.append(Shape.wrap(itr.Value()))
+            itr.Next()
+        return shapes
 
 
 class Vertex(Shape):
@@ -747,7 +753,7 @@ class Edge(Shape):
         :return: The underlying curve of the edge.
         :rtype: afem.geometry.entities.Curve
         """
-        geom_curve, _, _ = BRep_Tool.Curve(self.object, 0., 0.)
+        geom_curve, _, _ = BRep_Tool.Curve(self.object)
         return Curve.wrap(geom_curve)
 
     @property
@@ -1136,6 +1142,7 @@ class BBox(Bnd_Box):
 
     def __init__(self):
         super(BBox, self).__init__()
+        self._solid = None
 
     @property
     def is_void(self):
@@ -1240,6 +1247,24 @@ class BBox(Bnd_Box):
         :rtype: float
         """
         return sqrt(self.SquareExtent())
+
+    @property
+    def solid(self):
+        """
+        Create a solid of the bounding box.
+
+        :return: Solid
+        """
+        if self._solid is None:
+            sobj = BRepPrimAPI_MakeBox(self.pmin, self.pmax)
+            self._solid = Solid.wrap(sobj.Solid())
+        return self._solid
+
+    def copy(self):
+        bbc = self.__class__()
+
+        return
+
 
     def set_gap(self, gap):
         """
