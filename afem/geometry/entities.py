@@ -83,6 +83,14 @@ __all__ = [
 ]
 
 
+# DownCast Helper
+def downcast(cls, obj):
+    try:
+        return cls.DownCast(obj)
+    except Exception as e:
+        return False
+
+
 # 2-D -------------------------------------------------------------------------
 # Types derived from OpenCASCADE geometric processor (gp) package.
 class Point2D(gp_Pnt2d):
@@ -829,7 +837,7 @@ class Curve2D(Geometry2D):
         if u1 > u2:
             u1, u2 = u2, u1
         adp_crv = Geom2dAdaptor_Curve(self.object)
-        return GCPnts_AbscissaPoint.Length_(adp_crv, u1, u2, tol)
+        return GCPnts_AbscissaPoint.Length(adp_crv, u1, u2, tol)
 
     def to_3d(self, pln):
         """
@@ -853,12 +861,12 @@ class Curve2D(Geometry2D):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve2D
         """
-        crv = Geom2d_BSplineCurve.DownCast(curve)
-        if crv is not None:
-            return NurbsCurve2D(curve)
+        crv = downcast(Geom2d_BSplineCurve, curve)
+        if crv:
+            return NurbsCurve2D(crv)
 
-        crv = Geom_Curve.DownCast(curve)
-        if crv is not None:
+        crv = downcast(Geom_Curve, curve)
+        if crv:
             return Curve2D(crv)
 
         raise TypeError('Curve2D type not supported.')
@@ -1544,6 +1552,10 @@ class Vector(gp_Vec):
         """
         return self.xyz / self.mag
 
+    @property
+    def direction(self):
+        return Direction.by_xyz(*self.xyz)
+
     def reverse(self):
         """
         Reverse the direction of the vector.
@@ -2109,7 +2121,7 @@ class Curve(Geometry):
         if u1 > u2:
             u1, u2 = u2, u1
         adp_crv = GeomAdaptor_Curve(self.object)
-        return GCPnts_AbscissaPoint.Length_(adp_crv, u1, u2, tol)
+        return GCPnts_AbscissaPoint.Length(adp_crv, u1, u2, tol)
 
     def invert(self, p):
         """
@@ -2138,24 +2150,24 @@ class Curve(Geometry):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve
         """
-        crv = Geom_Line.DownCast()
-        if crv is not None:
-            return Line(curve)
-        crv = Geom_Circle.DownCast()
-        if crv is not None:
-            return Circle(curve)
-        crv = Geom_Ellipse.DownCast()
-        if crv is not None:
-            return Ellipse(curve)
-        crv = Geom_BSplineCurve.DownCast()
-        if crv is not None:
-            return NurbsCurve(curve)
-        crv = Geom_TrimmedCurve.DownCast()
-        if crv is not None:
-            return TrimmedCurve(curve)
-        crv = Geom_Curve.DownCast()
-        if crv is not None:
-            return Curve(curve)
+        crv = downcast(Geom_BSplineCurve, curve)
+        if crv:
+            return NurbsCurve(crv)
+        crv = downcast(Geom_TrimmedCurve, curve)
+        if crv:
+            return TrimmedCurve(crv)
+        crv = downcast(Geom_Curve, curve)
+        if crv:
+            return Curve(crv)
+        crv = downcast(Geom_Line, curve)
+        if crv:
+            return Line(crv)
+        crv = downcast(Geom_Circle, curve)
+        if crv:
+            return Circle(crv)
+        crv = downcast(Geom_Ellipse, curve)
+        if crv:
+            return Ellipse(crv)
 
         raise TypeError('Curve type not supported.')
 
@@ -2458,6 +2470,21 @@ class TrimmedCurve(Curve):
         """
         self.object.SetTrim(u1, u2, sense, adjust_periodic)
 
+    def set_p1(self, p, sense=True, adjust_periodic=True):
+        u1 = self.invert(p)
+        u2 = self.u2
+        self.set_trim(u1, u2, sense, adjust_periodic)
+
+    def set_p2(self, p, sense=True, adjust_periodic=True):
+        u2 = self.invert(p)
+        u1 = self.u1
+        self.set_trim(u1, u2, sense, adjust_periodic)
+
+    def set_points(self, p1, p2, sense=True, adjust_periodic=True):
+        u1 = self.invert(p1)
+        u2 = self.invert(p2)
+        self.set_trim(u1, u2, sense, adjust_periodic)
+
     @classmethod
     def by_parameters(cls, basis_curve, u1=None, u2=None, sense=True,
                       adjust_periodic=True):
@@ -2555,7 +2582,7 @@ class Surface(Geometry):
         :return: The first parameter in u-direction.
         :rtype: float
         """
-        return self.object.U1()
+        return self.object.UKnots().First()
 
     @property
     def u2(self):
@@ -2563,7 +2590,7 @@ class Surface(Geometry):
         :return: The last parameter in u-direction.
         :rtype: float
         """
-        return self.object.U2()
+        return self.object.UKnots().Last()
 
     @property
     def v1(self):
@@ -2571,7 +2598,7 @@ class Surface(Geometry):
         :return: The first parameter in v-direction.
         :rtype: float
         """
-        return self.object.V1()
+        return self.object.VKnots().First()
 
     @property
     def v2(self):
@@ -2579,7 +2606,7 @@ class Surface(Geometry):
         :return: The last parameter in v-direction.
         :rtype: float
         """
-        return self.object.V2()
+        return self.object.VKnots().Last()
 
     @property
     def area(self):
@@ -2739,17 +2766,17 @@ class Surface(Geometry):
         :return: The wrapped surface.
         :rtype: afem.geometry.entities.Surface
         """
-        crv = Geom_Plane.DownCast()
-        if crv is not None:
-            return Plane(surface)
-        crv = Geom_BSplineSurface.DownCast()
-        if crv is not None:
-            return NurbsSurface(surface)
+        srf = downcast(Geom_Plane, surface)
+        if srf:
+            return Plane(srf)
+        srf = downcast(Geom_BSplineSurface, surface)
+        if srf:
+            return NurbsSurface(srf)
 
         # Catch for unsupported type
-        crv = Geom_Surface.DownCast()
-        if crv is not None:
-            return Surface(surface)
+        srf = downcast(Geom_Surface, surface)
+        if srf:
+            return Surface(srf)
 
         raise TypeError('Surface type not supported.')
 
@@ -2847,6 +2874,8 @@ class Plane(Surface):
         :return: The new plane.
         :rtype: afem.geometry.entities.Plane
         """
+        if not isinstance(n, Direction):
+            n = Direction.by_xyz(*n)
         return cls(Geom_Plane(p, n))
 
 
@@ -3229,6 +3258,19 @@ class NurbsSurface(Surface):
         :param bool is_u_periodic: Flag for periodicity in u-direction.
         :param bool is_v_periodic: Flag for periodicity in v-direction.
         """
+        test_cp = array(cp)
+        u_test = sum(umult) == cp.shape[0] + p + 1
+        v_test = sum(vmult) == cp.shape[1] + q + 1
+        if not u_test:
+            raise ValueError(
+                'u-direction data set up incorrectly. Total number of uknots '
+                'must equal number of u control points + u-degree + 1'
+            )
+        if not v_test:
+            raise ValueError(
+                'v-direction data set up incorrectly. Total number of vknots '
+                'must equal number of v control points + v-degree + 1'
+            )
         tcol_cp = occ_utils.to_tcolgp_array2_pnt(cp)
         tcol_uknots = occ_utils.to_tcolstd_array1_real(uknots)
         tcol_umult = occ_utils.to_tcolstd_array1_integer(umult)
