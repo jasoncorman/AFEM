@@ -1449,10 +1449,6 @@ class PlanesBetweenPlanesByNumber(object):
         p2 = csi.Point(1)
 
         n = int(n)
-        if d1 is None:
-            n += 1
-        if d2 is None:
-            n += 1
 
         c = NurbsCurveByPoints([p1, p2]).curve
         builder = PlanesAlongCurveByNumber(c, n, pln1, d1=d1, d2=d2)
@@ -1460,13 +1456,6 @@ class PlanesBetweenPlanesByNumber(object):
         plns = builder.planes
         nplns = builder.nplanes
         spacing = None
-
-        if plns and plns[0].distance(c.p1) <= 1.0e-7:
-            plns.pop(0)
-            nplns -= 1
-        if plns and plns[-1].distance(c.p2) <= 1.0e-7:
-            plns.pop(-1)
-            nplns -= 1
 
         if nplns > 1:
             p1 = plns[0].eval(0., 0.)
