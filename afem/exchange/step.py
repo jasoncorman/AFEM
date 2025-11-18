@@ -20,8 +20,15 @@ from OCC.Core.IFSelect import (IFSelect_RetError,
                            IFSelect_RetDone)
 from OCC.Core.Interface import Interface_Static
 from OCC.Core.STEPConstruct import stepconstruct
-from OCC.Core.STEPControl import (STEPControl_AsIs, STEPControl_Writer,
-                              STEPControl_Reader)
+from OCC.Core.STEPControl import (
+    STEPControl_AsIs,
+    STEPControl_Writer,
+    STEPControl_Reader,
+)
+from OCC.Core.StepRepr import (
+    StepRepr_Representation,
+    StepRepr_RepresentationItem,
+)
 from OCC.Core.TCollection import TCollection_HAsciiString
 
 from afem.config import Settings, units_dict
@@ -153,6 +160,16 @@ class StepRead(object):
         nroots = self._reader.TransferRoots()
         if nroots > 0:
             self._shape = Shape.wrap(self._reader.OneShape())
+            self._model = self._reader.StepModel()
+            self._named_shapes = None
+
+    def __iter__(self):
+        for s in self._shape.solids:
+            yield s
+        for f in self._shape.faces:
+            yield f
+        for e in self._shape.edges:
+            yield e
 
     @property
     def object(self):
@@ -170,6 +187,10 @@ class StepRead(object):
         """
         return self._shape
 
+    @property
+    def model(self):
+        return self._model
+
     def name_from_shape(self, shape):
         """
         Attempt to extract the name for the STEP entity that corresponds to the
@@ -183,4 +204,14 @@ class StepRead(object):
         item = self._tr.EntityFromShapeResult(shape.object, 1)
         if not item:
             return None
+        item = StepRepr_RepresentationItem.DownCast(item)
         return item.Name().ToCString()
+
+    @property
+    def named_shapes(self):
+        if self._named_shapes is None:
+            self._named_shapes = {
+                self.name_from_shape(shape): shape
+                for shape in self
+            }
+        return self._named_shapes
