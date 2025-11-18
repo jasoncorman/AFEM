@@ -21,6 +21,7 @@ from afem.exchange.xde import XdeDocument
 from afem.structure.utils import order_parts_by_id
 from afem.topology.create import CompoundByShapes, EdgeByCurve, FaceBySurface
 
+
 __all__ = ["Group", "GroupAPI"]
 
 
@@ -48,6 +49,11 @@ class Group(NamedItem):
         :rtype: afem.structure.group.Group or None
         """
         return self._parent
+
+    def set_parent(self, group):
+        self._parent = group
+        if isinstance(self._parent, Group):
+            self._parent._children.add(self)
 
     @property
     def parts(self):
