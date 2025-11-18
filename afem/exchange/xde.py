@@ -30,6 +30,7 @@ from OCC.Core.TDF import TDF_ChildIterator, TDF_Label, TDF_LabelSequence
 from OCC.Core.TDataStd import TDataStd_Name, TDataStd_AsciiString
 from OCC.Core.TDocStd import TDocStd_Document
 from OCC.Core.TNaming import TNaming_NamedShape
+from OCC.Core.TopLoc import TopLoc_Location
 from OCC.Core.XCAFApp import XCAFApp_Application
 from OCC.Core.XCAFDoc import XCAFDoc_DocumentTool, XCAFDoc_Color
 from OCC.Core.XmlXCAFDrivers import xmlxcafdrivers
@@ -292,14 +293,16 @@ class XdeDocument(object):
         """
         Add a new top-level shape.
 
-        :param afem.topology.entities.Shape shape: The shape.
+        :param afem.topology.entities.Shape or None shape: The shape.
         :param str name: The label name.
         :param bool make_assy: If *True*, then treat compounds as assemblies.
 
         :return: The shape label.
         :rtype: afem.exchange.xde.XdeLabel
         """
-        label = XdeLabel(self._tool.AddShape(shape.object, make_assy))
+        if shape is not None:
+            shape = shape.object
+        label = XdeLabel(self._tool.AddShape(shape, make_assy))
         if name is not None:
             label.set_name(name)
         return label
@@ -359,6 +362,10 @@ class XdeDocument(object):
         if not status:
             return None
         return XdeLabel(sub_label)
+
+    def add_component(self, parent_label, child_label, trsf=None):
+        loc = TopLoc_Location(trsf) if trsf else TopLoc_Location()
+        self._tool.AddComponent(parent_label, child_label, loc)
 
     def add_subshape(self, label, shape, name=None):
         """
