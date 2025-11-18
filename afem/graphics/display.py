@@ -101,9 +101,14 @@ class Viewer(wxViewer3d):
                 background_gradient_color1, background_gradient_color2
             )
 
-    def start(self):
+    def start(self, fit=True):
         self.win.Show()
         self._app.MainLoop()
+        if fit:
+            self.display.FitAll()
+
+    def clear(self):
+        self.display.EraseAll()
 
     def hide(self):
         self.win.Hide()
