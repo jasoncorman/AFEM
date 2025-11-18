@@ -24,6 +24,7 @@ from OCC.Core.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
                                ShapeUpgrade_ShapeDivideContinuity,
                                ShapeUpgrade_UnifySameDomain)
 from OCC.Core.TopTools import (TopTools_MapOfShape,
+                           TopTools_DataMapOfShapeShape,
                            TopTools_IndexedMapOfShape)
 
 from afem.geometry.entities import Geometry
@@ -456,7 +457,7 @@ class RebuildShapesByTool(object):
     def __init__(self, old_shapes, tool):
         reshape = ShapeBuild_ReShape()
 
-        self._new_shapes = TopTools_MapOfShape()
+        self._new_shapes = TopTools_DataMapOfShapeShape()
         index_map = TopTools_IndexedMapOfShape()
 
         for old_shape in old_shapes:
