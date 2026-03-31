@@ -76,6 +76,7 @@ class XdeDocument(object):
         self._init_tool()
 
     def _init_tool(self):
+        self.top_label = self._doc.Main()
         self._tool = XCAFDoc_DocumentTool.ShapeTool(self._doc.Main())
 
     @property
@@ -92,7 +93,7 @@ class XdeDocument(object):
         :return: The shapes label of the document.
         :rtype: afem.exchange.xde.XdeLabel
         """
-        return XdeLabel(XCAFDoc_DocumentTool.ShapesLabel_(self._doc.Main()))
+        return XdeLabel(XCAFDoc_DocumentTool.ShapesLabel(self._doc.Main()))
 
     def open(self, fn):
         """
@@ -330,7 +331,9 @@ class XdeDocument(object):
         """
         labels = TDF_LabelSequence()
         self._tool.GetShapes(labels)
-        return [XdeLabel(label) for label in labels]
+        return [
+            XdeLabel(labels.Value(i)) for i in range(1, labels.Length() + 1)
+        ]
 
     def get_shape_by_name(self, name):
         """
@@ -365,7 +368,7 @@ class XdeDocument(object):
 
     def add_component(self, parent_label, child_label, trsf=None):
         loc = TopLoc_Location(trsf) if trsf else TopLoc_Location()
-        self._tool.AddComponent(parent_label, child_label, loc)
+        self._tool.AddComponent(parent_label.object, child_label.object, loc)
 
     def add_subshape(self, label, shape, name=None):
         """
@@ -485,11 +488,7 @@ class XdeLabel(object):
         :return: The label name.
         :rtype: str or None
         """
-        name = TDataStd_Name()
-        status, name = self._label.FindAttribute(name.GetID(), name)
-        if status:
-            return name.Get().ToExtString()
-        return None
+        return self.object.GetLabelName()
 
     @property
     def shape(self):
@@ -498,8 +497,8 @@ class XdeLabel(object):
         :rtype: afem.topology.entities.Shape or None
         """
         shape = TNaming_NamedShape()
-        status, shape = self._label.FindAttribute(shape.GetID(), shape)
-        if status:
+        status = self._label.FindAttribute(shape.GetID(), shape)
+        if status and shape.Get() is not None:
             return Shape.wrap(shape.Get())
         return None
 
@@ -510,8 +509,8 @@ class XdeLabel(object):
         :rtype: str or None
         """
         string = TDataStd_AsciiString()
-        status, string = self._label.FindAttribute(string.GetID(), string)
-        if status:
+        status = self._label.FindAttribute(string.GetID(), string)
+        if status and string.Get() is not None:
             return string.Get().ToCString()
         return None
 
