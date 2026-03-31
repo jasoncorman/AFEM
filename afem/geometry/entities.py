@@ -42,8 +42,9 @@ from OCC.Core.Geom2d import Geom2d_BSplineCurve, Geom2d_Curve
 from OCC.Core.Geom2dAdaptor import Geom2dAdaptor_Curve
 from OCC.Core.GeomAPI import (geomapi, GeomAPI_ProjectPointOnCurve,
                           GeomAPI_ProjectPointOnSurf)
-from OCC.Core.GeomAbs import (GeomAbs_Shape, GeomAbs_JoinType, GeomAbs_CurveType,
-                          GeomAbs_SurfaceType)
+from OCC.Core.GeomAbs import (
+    GeomAbs_Shape, GeomAbs_JoinType, GeomAbs_CurveType, GeomAbs_SurfaceType
+)
 from OCC.Core.GeomAdaptor import GeomAdaptor_Curve, GeomAdaptor_Surface
 from OCC.Core.GeomLib import GeomLib_IsPlanarSurface
 from OCC.Core.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
@@ -51,7 +52,9 @@ from OCC.Core.TColStd import (TColStd_Array1OfInteger, TColStd_Array1OfReal,
 from OCC.Core.TColgp import TColgp_Array1OfPnt, TColgp_Array2OfPnt
 from OCC.Core.gp import (gp_Ax1, gp_Ax2, gp_Ax3, gp_Dir, gp_Pnt, gp_Pnt2d,
                      gp_Vec2d, gp_Dir2d, gp_Vec)
-from numpy import add, array, float64, subtract, ones
+from numpy import (
+    add, array, float64, subtract, ones, reshape, clip, empty_like, argsort
+)
 
 from afem.base.entities import ViewableItem
 from afem.geometry import utils as geom_utils
@@ -861,14 +864,20 @@ class Curve2D(Geometry2D):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve2D
         """
-        crv = downcast(Geom2d_BSplineCurve, curve)
-        if crv:
-            return NurbsCurve2D(crv)
+        for i in range(3):
+            try:
+                crv = downcast(Geom2d_BSplineCurve, curve)
+                if crv:
+                    return NurbsCurve2D(crv)
 
-        crv = downcast(Geom_Curve, curve)
-        if crv:
-            return Curve2D(crv)
-
+                crv = downcast(Geom_Curve, curve)
+                if crv:
+                    return Curve2D(crv)
+            except Exception as e:
+                print(
+                    'Downcast of {} failed by {}\n'
+                    'Trying again | Attempt {} of 3'.format(curve, e, i + 1)
+                )
         raise TypeError('Curve2D type not supported.')
 
 
@@ -2076,6 +2085,59 @@ class Curve(Geometry):
         self.object.D0(u, p)
         return p
 
+    def sample(self, t, tol=1e-7):
+        """
+        Sample points spatially on a cruve.
+
+        :param float or numpy.ndarray t: Spatial parameter(s) normalized by
+            arc length of the curve.
+
+        :return: List of curve points.
+        :rtype: list of afem.geometry.entities.Point
+        """
+        t = array(t, dtype=float)
+        if any(t < 0.0) or any(t > 1.0):
+            bad = t[(t < 0.0) | (t > 1.0)]
+            UserWarning(
+                f"t_norm must be in [0,1]. Out-of-range values are "
+                f"being discarded: {bad[:10]}"
+            )
+        t = clip(t, 0., 1.)
+        targets = t*self.length
+        order = argsort(targets)
+        s_sorted = targets[order]
+
+        u_prev = self.u1
+        s_prev = 0.
+
+        adp_crv = GeomAdaptor_Curve(self.object)
+        params_sorted = empty_like(s_sorted, dtype=float)
+
+        for i, s in enumerate(s_sorted):
+            ds = float(s - s_prev)
+
+            if abs(ds) < 1e-15:
+                u = u_prev
+            else:
+                ap = GCPnts_AbscissaPoint(tol, adp_crv, ds, u_prev)
+                if not ap.IsDone():
+                    raise RuntimeError(
+                        'Abscissa inversion failed. Try a larger '
+                        'tol (e.g., 1e-7) or verify the curve is '
+                        'valid/non-degenerate.'
+                    )
+                u = ap.Parameter()
+
+            params_sorted[i] = u
+            u_prev = u
+            s_prev = s
+
+        # unsort to match input order
+        params = empty_like(params_sorted, dtype=float)
+        params[order] = params_sorted
+
+        return [self.eval(float(u)) for u in params]
+        
     def deriv(self, u, d=1):
         """
         Evaluate a derivative on the curve.
@@ -2150,25 +2212,31 @@ class Curve(Geometry):
         :return: The wrapped curve.
         :rtype: afem.geometry.entities.Curve
         """
-        crv = downcast(Geom_BSplineCurve, curve)
-        if crv:
-            return NurbsCurve(crv)
-        crv = downcast(Geom_TrimmedCurve, curve)
-        if crv:
-            return TrimmedCurve(crv)
-        crv = downcast(Geom_Curve, curve)
-        if crv:
-            return Curve(crv)
-        crv = downcast(Geom_Line, curve)
-        if crv:
-            return Line(crv)
-        crv = downcast(Geom_Circle, curve)
-        if crv:
-            return Circle(crv)
-        crv = downcast(Geom_Ellipse, curve)
-        if crv:
-            return Ellipse(crv)
-
+        for i in range(3):
+            try:
+                crv = downcast(Geom_BSplineCurve, curve)
+                if crv:
+                    return NurbsCurve(crv)
+                crv = downcast(Geom_TrimmedCurve, curve)
+                if crv:
+                    return TrimmedCurve(crv)
+                crv = downcast(Geom_Curve, curve)
+                if crv:
+                    return Curve(crv)
+                crv = downcast(Geom_Line, curve)
+                if crv:
+                    return Line(crv)
+                crv = downcast(Geom_Circle, curve)
+                if crv:
+                    return Circle(crv)
+                crv = downcast(Geom_Ellipse, curve)
+                if crv:
+                    return Ellipse(crv)
+            except Exception as e:
+                print(
+                    'Downcast of {} failed by {}\n'
+                    'Trying again | Attempt {} of 3'.format(curve, e, i + 1)
+                )
         raise TypeError('Curve type not supported.')
 
 
@@ -2671,6 +2739,50 @@ class Surface(Geometry):
         self.object.D0(u, v, p)
         return p
 
+    # def sample(self, t, tol=1e-7):
+    #     """
+    #     Sample points spatially on a surface.
+    #
+    #     :param list or tuple or numpy.ndarray t: Spatial parameters
+    #     normalized by arc lengths of local iso-curves.
+    #
+    #     :return: List of points.
+    #     :rtype: list of afem.geometry.entities.Point
+    #     """
+    #     t = array(t, dtype=float)
+    #     if np_any(t < 0.0) or np_any(t > 1.0):
+    #         bad = t[(t < 0.0) | (t > 1.0)]
+    #         UserWarning(
+    #             f"t_norm must be in [0,1]. Out-of-range values are "
+    #             f"being discarded: {bad[:10]}"
+    #         )
+    #     t = clip(t, 0., 1.)
+    #     targets = t * self.length
+    #     order = argsort(targets)
+    #     s_sorted = targets[order]
+    #
+    #     u_prev = u0
+    #     s_prev = 0.
+    #
+    #     u_iso0 = self.u_iso(self.u1)
+    #
+    #     tuu = unique(t[:, 0])
+    #     ucrvs = [self.u_iso(self.invert(p)) for p in u_iso0.sample(tu)]
+    #     tv_list = [
+    #         array([tuv[1] for tuv in t if tuv[0] == tui])
+    #         for tui in tuu
+    #     ]
+    #     point_lists = [uc.sample(tv) for uc in ucrvs]
+    #
+    #     indices = [
+    #         (
+    #             int(where(tuu == ti[0])),
+    #             int(where(tv_list[int(where(tuu == ti[0]))]))
+    #         )
+    #         for ti in t
+    #     ]
+    #     return [point_lists[ind[0]][ind[1]] for ind in indices]
+
     def deriv(self, u, v, nu, nv):
         """
         Evaluate a derivative on the surface.
@@ -2766,18 +2878,24 @@ class Surface(Geometry):
         :return: The wrapped surface.
         :rtype: afem.geometry.entities.Surface
         """
-        srf = downcast(Geom_Plane, surface)
-        if srf:
-            return Plane(srf)
-        srf = downcast(Geom_BSplineSurface, surface)
-        if srf:
-            return NurbsSurface(srf)
+        for i in range(3):
+            try:
+                srf = downcast(Geom_Plane, surface)
+                if srf:
+                    return Plane(srf)
+                srf = downcast(Geom_BSplineSurface, surface)
+                if srf:
+                    return NurbsSurface(srf)
 
-        # Catch for unsupported type
-        srf = downcast(Geom_Surface, surface)
-        if srf:
-            return Surface(srf)
-
+                # Catch for unsupported type
+                srf = downcast(Geom_Surface, surface)
+                if srf:
+                    return Surface(srf)
+            except Exception as e:
+                print(
+                    'Downcast of {} failed by {}\n'
+                    'Trying again | Attempt {} of 3'.format(surface, e, i + 1)
+                )
         raise TypeError('Surface type not supported.')
 
 
@@ -3008,6 +3126,26 @@ class NurbsSurface(Surface):
         :rtype: numpy.ndarray
         """
         return geom_utils.homogenize_array2d(self.cp, self.w)
+    
+    @property
+    def transposed(self):
+        cp = reshape(
+            self.cp,
+            [self.cp.shape[1], self.cp.shape[0], self.cp.shape[2]]
+        )
+        w = reshape(self.w, [self.w.shape[1], self.w.shape[0]])
+        return self.by_data(
+            cp=cp,
+            uknots=self.vknots,
+            vknots=self.uknots,
+            umult=self.vmult,
+            vmult=self.umult,
+            p=self.q,
+            q=self.p,
+            weights=w,
+        )
+        
+        return self.wrap(self.object.Transposed())
 
     def set_udomain(self, u1=0., u2=1.):
         """
