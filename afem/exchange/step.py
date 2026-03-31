@@ -170,6 +170,18 @@ class StepRead(object):
             yield f
         for e in self._shape.edges:
             yield e
+        for vert in self._shape.vertices:
+            yield vert
+        
+    def __reversed__(self):
+        for vert in self._shape.vertices:
+            yield vert
+        for e in self._shape.edges:
+            yield e
+        for f in self._shape.faces:
+            yield f
+        for s in self._shape.solids:
+            yield s
 
     @property
     def object(self):
@@ -213,5 +225,6 @@ class StepRead(object):
             self._named_shapes = {
                 self.name_from_shape(shape): shape
                 for shape in self
+                if self.name_from_shape(shape) != ''
             }
         return self._named_shapes
