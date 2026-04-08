@@ -8,3 +8,4 @@ dependencies:
   - pythonocc-core
   - numpy
   - scipy
+  - wxpython

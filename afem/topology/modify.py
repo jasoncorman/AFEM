@@ -23,9 +23,12 @@ from OCC.Core.ShapeCustom import ShapeCustom_BSplineRestriction
 from OCC.Core.ShapeUpgrade import (ShapeUpgrade_ShapeDivideClosed,
                                ShapeUpgrade_ShapeDivideContinuity,
                                ShapeUpgrade_UnifySameDomain)
-from OCC.Core.TopTools import (TopTools_MapOfShape,
-                           TopTools_DataMapOfShapeShape,
-                           TopTools_IndexedMapOfShape)
+from OCC.Core.TopTools import (
+    TopTools_MapOfShape,
+    TopTools_DataMapOfShapeShape,
+    TopTools_IndexedMapOfShape,
+    TopTools_IndexedMapOfShape,
+)
 
 from afem.geometry.entities import Geometry
 from afem.topology.entities import Shape, Edge, Compound

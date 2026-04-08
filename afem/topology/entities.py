@@ -35,6 +35,7 @@ from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox
 from OCC.Core.BRepTools import breptools, BRepTools_WireExplorer
 from OCC.Core.Bnd import Bnd_Box
 from OCC.Core.GProp import GProp_GProps
+from OCC.Core.Geom import Geom_Plane, Geom_BSplineSurface
 from OCC.Core.GeomConvert import GeomConvert_CompCurveToBSplineCurve
 from OCC.Core.ShapeAnalysis import ShapeAnalysis_Edge, ShapeAnalysis_ShapeTolerance
 from OCC.Core.ShapeFix import ShapeFix_Solid
