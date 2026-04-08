@@ -2691,7 +2691,13 @@ class Surface(Geometry):
         :return: New surface.
         :rtype: afem.geometry.entities.Surface
         """
-        return Surface.wrap(self.object.Copy())
+        for i in range(5):
+            obj = self.object.Copy()
+            if obj is None:
+                continue
+            else:
+                return Surface.wrap(obj)
+        raise RuntimeError('Failed to copy {}'.format(self.object))
 
     def is_planar(self, tol=1.0e-7):
         """
