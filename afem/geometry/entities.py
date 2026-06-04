@@ -60,6 +60,8 @@ from afem.base.entities import ViewableItem
 from afem.geometry import utils as geom_utils
 from afem.misc import utils as misc_utils
 from afem.occ import utils as occ_utils
+from time import sleep
+
 
 __all__ = [
     "Geometry2D",
@@ -2696,7 +2698,12 @@ class Surface(Geometry):
             if obj is None:
                 continue
             else:
-                return Surface.wrap(obj)
+                for i in range(5):
+                    try:
+                        srf = Surface.wrap(obj)
+                        return srf
+                    except Exception as e:
+                        pass
         raise RuntimeError('Failed to copy {}'.format(self.object))
 
     def is_planar(self, tol=1.0e-7):
@@ -2884,7 +2891,7 @@ class Surface(Geometry):
         :return: The wrapped surface.
         :rtype: afem.geometry.entities.Surface
         """
-        for i in range(3):
+        for i in range(10):
             try:
                 srf = downcast(Geom_Plane, surface)
                 if srf:
@@ -2900,8 +2907,21 @@ class Surface(Geometry):
             except Exception as e:
                 print(
                     'Downcast of {} failed by {}\n'
-                    'Trying again | Attempt {} of 3'.format(surface, e, i + 1)
+                    'Trying again | Attempt {} of 10'.format(surface, e, i + 1)
                 )
+        # Issue typically resolves in debug - trying a wait
+        sleep(0.5)
+        srf = downcast(Geom_Plane, surface)
+        if srf:
+            return Plane(srf)
+        srf = downcast(Geom_BSplineSurface, surface)
+        if srf:
+            return NurbsSurface(srf)
+
+        # Catch for unsupported type
+        srf = downcast(Geom_Surface, surface)
+        if srf:
+            return Surface(srf)
         raise TypeError('Surface type not supported.')
 
 
