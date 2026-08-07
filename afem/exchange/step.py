@@ -142,9 +142,11 @@ class StepRead(object):
     Read a STEP file.
 
     :param str fn: The file to read.
+    :param str length_unit: Length unit to read file with
+    :param Optional[float] scale_factor: Scale the shape photographically 
     """
 
-    def __init__(self, fn):
+    def __init__(self, fn, length_unit=Settings.units, scale_factor=None):
         self._reader = STEPControl_Reader()
         self._tr = self._reader.WS().TransferReader()
 
@@ -154,10 +156,18 @@ class StepRead(object):
             raise RuntimeError("Error reading STEP file.")
 
         # Convert to desired units
-        Interface_Static.SetCVal("xstep.cascade.unit", Settings.units)
+        Interface_Static.SetCVal("xstep.cascade.unit", length_unit)
 
         # Transfer
         nroots = self._reader.TransferRoots()
+        
+        # Set units and scale
+        self._length_unit_file = self._reader.SystemLengthUnit()
+        self._scale_factor = scale_factor
+        if scale_factor is not None:
+            self._reader.SetSystemLengthUnit(
+                self._length_unit_file/self._scale_factor
+            )
         if nroots > 0:
             self._shape = Shape.wrap(self._reader.OneShape())
             self._model = self._reader.StepModel()

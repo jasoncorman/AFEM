@@ -160,7 +160,7 @@ class XdeDocument(object):
         label = XCAFDoc_DocumentTool.ShapesLabel_(self._doc.Main())
         return XdeLabel(label)
 
-    def transfer_step(self, schema='AP203', units=None):
+    def transfer_step(self, schema='AP203', units=Settings.units):
         """
         Transfer the document in preparation for STEP export.
 
@@ -181,6 +181,7 @@ class XdeDocument(object):
         except KeyError:
             units = Settings.units
         Interface_Static.SetCVal('write.step.unit', units)
+        Interface_Static.SetCVal("xstep.cascade.unit", units)
 
         self._step_writer.Transfer(self._doc)
 
