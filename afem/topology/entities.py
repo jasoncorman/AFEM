@@ -17,6 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 from math import sqrt
+from numpy import array
 
 from OCC.Core.BRep import BRep_Tool, BRep_Builder
 from OCC.Core.BRepAdaptor import BRepAdaptor_Curve
@@ -31,6 +32,7 @@ from OCC.Core.BRepBuilderAPI import (
 )
 from OCC.Core.BRepClass3d import brepclass3d
 from OCC.Core.BRepGProp import brepgprop
+from OCC.Core.BRepMesh import BRepMesh_IncrementalMesh
 from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox
 from OCC.Core.BRepTools import breptools, BRepTools_WireExplorer
 from OCC.Core.Bnd import Bnd_Box
@@ -930,7 +932,7 @@ class Face(Shape):
         return Shell(topods_shell)
 
     @staticmethod
-    def by_surface(surface):
+    def by_surface(surface, wire=None, inside=True, tol=1e-7):
         """
         Create a face by a surface.
 
@@ -939,7 +941,12 @@ class Face(Shape):
         :return: The face.
         :rtype: afem.topology.entities.Face
         """
-        return Face(BRepBuilderAPI_MakeFace(surface.object, 1.0e-7).Face())
+        args = [surface.object]
+        if wire is not None:
+            args.extend([wire.object, inside])
+        else:
+            args.append(tol)
+        return Face(BRepBuilderAPI_MakeFace(*args).Face())
 
     @staticmethod
     def by_wire(wire):
@@ -1141,10 +1148,22 @@ class BBox(Bnd_Box):
     Bounding box in 3-D space.
     """
 
-    def __init__(self):
+    def __init__(self, *args, gap=0., use_mesh=False, use_tol=False):
         super(BBox, self).__init__()
+        self.set_gap(gap)
         self._solid = None
-
+        for arg in args:
+            if hasattr(arg, 'vertices'):
+                self.add_shape(arg, use_mesh, use_tol)
+            elif isinstance(arg, BBox):
+                self.add_box(arg)
+            else:
+                self.add_pnt(arg)
+                    
+    @property
+    def size(self):
+        return self.pmax - self.pmin
+    
     @property
     def is_void(self):
         """
@@ -1172,6 +1191,16 @@ class BBox(Bnd_Box):
         if self.is_void:
             return None
         return Point(self.CornerMax().XYZ())
+    
+    @property
+    def pavg(self):
+        """
+        :return: Average of pmin and pmax. *None* if empty
+        :rtype: afem.geometry.entities.Point
+        """
+        if self.is_void:
+            return None
+        return Point(*self.center)
 
     @property
     def xmin(self):
@@ -1232,6 +1261,14 @@ class BBox(Bnd_Box):
         if self.is_void:
             return None
         return self.CornerMax().Z()
+    
+    @property
+    def center(self):
+        return array([
+            0.5*(self.xmin + self.xmax),
+            0.5*(self.ymin + self.ymax),
+            0.5*(self.zmin + self.zmax),
+        ])
 
     @property
     def gap(self):
@@ -1263,7 +1300,6 @@ class BBox(Bnd_Box):
 
     def copy(self):
         bbc = self.__class__()
-
         return
 
 
@@ -1320,7 +1356,14 @@ class BBox(Bnd_Box):
 
         self.Add(pnt)
 
-    def add_shape(self, shape):
+    def add_shape(
+            self,
+            shape,
+            use_mesh=False,
+            use_tol=False,
+            length=None,
+            angle=0.5*3.14159,
+    ):
         """
         Add shape to the bounding box.
 
@@ -1328,7 +1371,19 @@ class BBox(Bnd_Box):
 
         :return: None.
         """
-        brepbndlib.Add(shape.object, self, True)
+        if use_mesh:
+            mesh = BRepMesh_IncrementalMesh()
+            params = mesh.ChangeParameters()
+            params.Deflection = length
+            params.Angle = angle
+            params.MinSize = 0.1*length
+            params.Relative = False
+            params.InternalVerticesMode = False
+            mesh.SetParallelDefault(True)
+            mesh.SetShape(shape.object)
+            mesh.Perform()
+            assert mesh.IsDone()
+        brepbndlib.AddOptimal(shape.object, self, use_mesh, use_tol)
 
     def is_pnt_out(self, pnt):
         """

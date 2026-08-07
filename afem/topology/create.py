@@ -451,8 +451,13 @@ class FaceBySurface(object):
     :param float tol: Tolerance for resolution of degenerate edges.
     """
 
-    def __init__(self, srf, tol=1.0e-7):
-        self._f = Face(BRepBuilderAPI_MakeFace(srf.object, tol).Face())
+    def __init__(self, srf, wire=None, inside=True, tol=1.0e-7):
+        args = [srf.object]
+        if wire is not None:
+            args.extend([wire.object, inside])
+        else:
+            args.append(tol)
+        self._f = Face(BRepBuilderAPI_MakeFace(*args).Face())
 
     @property
     def face(self):

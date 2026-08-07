@@ -174,7 +174,7 @@ class BopAlgo(BopCore):
 
         :return: None.
         """
-        BOPAlgo_Options.SetParallelMode_(flag)
+        BOPAlgo_Options.SetParallelMode(flag)
 
     def debug(self, path='.'):
         """
